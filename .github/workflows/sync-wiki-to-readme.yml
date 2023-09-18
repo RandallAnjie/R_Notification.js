@@ -3,7 +3,7 @@ name: Sync Wiki and Template to README
 on:
   push:
   schedule:
-    - cron: '0 0 * * *' # 每天运行
+    - cron: '0 0 * * *' # 每天运行一次
 
 jobs:
   sync:
@@ -11,6 +11,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        token: ${{ secrets.GH_PUSH_TOKEN }}
+        persist-credentials: false
 
     - name: Checkout Wiki repository
       run: |
@@ -28,8 +31,6 @@ jobs:
       run: |
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
-        git remote set-url origin https://x-access-token:${{ secrets.GH_PUSH_TOKEN }}@github.com/RandallAnjie/RNotification.git
         git add README.md
         git commit -m "Sync Wiki and Template content to README" || echo "No changes to commit"
         git push
-
