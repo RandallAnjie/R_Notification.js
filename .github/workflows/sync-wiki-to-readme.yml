@@ -3,7 +3,7 @@ name: Sync Wiki and Template to README
 on:
   push:
   schedule:
-    - cron: '0 0 * * *' # 每天运行一次
+    - cron: '0 0 * * *' # 每天运行
 
 jobs:
   sync:
