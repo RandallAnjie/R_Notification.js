@@ -1,6 +1,7 @@
 name: Sync Wiki and Template to README
 
 on:
+  push:
   schedule:
     - cron: '0 0 * * *' # 每天运行一次
 
@@ -18,9 +19,9 @@ jobs:
     - name: Merge content to README
       run: |
         cat README_templet.md > README.md
-        echo "\n\n" >> README.md
+        echo "\n\n# 使用说明\n\n详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/使用说明)\n\n" >> README.md
         cat wiki/使用说明.md >> README.md
-        echo "\n\n" >> README.md
+        echo "\n\n# 更新日志\n\n详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/更新日志)\n\n" >> README.md
         cat wiki/更新日志.md >> README.md
 
     - name: Commit changes
