@@ -8,7 +8,7 @@
 详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/使用说明)
 
 # 更新日志
-详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/更新日志)\n\n# 使用说明\n\n详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/使用说明)\n\n
+详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/更新日志)
 ## 特性说明
 
 ### 按住 `alt` 键即可选中弹窗气泡中文字，松开鼠标即可复制
@@ -72,7 +72,7 @@ autoDisappearTime 自动消失时间，0 不消失，其他 固定ms消失
 
 ## 注意
 
-`message` 属性虽然支持传入 `HTML` 片段，但是在网站上动态渲染任意 `HTML` 是非常危险的，因为容易导致 `XSS` 攻击。 因此请确保 `message` 的内容是可信的，永远不要将用户提交的内容赋值给 `message` 属性。由于本项目是js插件，用户能直接在控制台调用 `showMessage` 函数，后期更新将在内部修改进行安全性判定\n\n# 更新日志\n\n详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/更新日志)\n\n
+`message` 属性虽然支持传入 `HTML` 片段，但是在网站上动态渲染任意 `HTML` 是非常危险的，因为容易导致 `XSS` 攻击。 因此请确保 `message` 的内容是可信的，永远不要将用户提交的内容赋值给 `message` 属性。由于本项目是js插件，用户能直接在控制台调用 `showMessage` 函数，后期更新将在内部修改进行安全性判定
 ## V1.8
 
 > 2023-09-17
