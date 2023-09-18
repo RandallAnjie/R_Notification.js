@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
     for (var i = 0; i < showMessageQueue.length; i++) {
         showMessageInJS.apply(null, showMessageQueue[i]);
     }
-    console.info("您已经成功加载弹窗插件\n当前版本：V1.8; 更新日期：2023-09-17\n默认最大存储到session storage中的消息数目为5条\n详细使用方法及细节: https://randallanjie.com/demo/notification/ \nCopyright randallanjie.com © . All rights reserved.\nAuthor: Randall\nWebsite: https://randallanjie.com");
+    console.info("您已经成功加载弹窗插件\n当前版本：V1.8; 更新日期：2023-09-17\n默认最大存储到session storage中的消息数目为5条\n详细使用方法及细节: https://github.com/RandallAnjie/RNotification \nCopyright randallanjie.com © . All rights reserved.\nAuthor: Randall\nWebsite: https://randallanjie.com");
 });
 
 /**

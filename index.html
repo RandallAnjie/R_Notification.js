@@ -123,6 +123,10 @@
     <div style="">
         <h2>RNotification</h2>
         <div>
+            Github仓库: <a href="https://github.com/RandallAnjie/RNotification" target="_blank">点我去往 RNotification </a>
+        </div>
+        <br />
+        <div>
             <input id="msg" placeholder="请输入弹窗内容" type="text" /><br />
             <label><input type="checkbox" value="1" class="chackbox"> 是否在消息前加上日期 </label><br />
             <label><input type="checkbox" value="1" class="chackbox"> 是否存入session </label><br />
@@ -145,7 +149,7 @@
     var rPaddingRight = 10; // 距离右边距离，默认20px
 &lt;/script&gt;
 &lt;!-- 引入js文件 --&gt;
-&lt;script src="https://randallanjie.com/js/notification.js"&gt;&lt;/script&gt;
+&lt;script src="https://notification.randallanjie.com/r_notification.js"&gt;&lt;/script&gt;
 &lt;script&gt;
     // 再在script中调用 showMessage() 方法即可
     showMessage('我是消息～', 0, 'up', 0);
@@ -200,7 +204,7 @@
         var rPaddingRight = 30; // 距离右边距离，默认20px
     </script>
     <!-- 没错，就是下面的这一行 -->
-    <script src="r_notification.js"></script>
+    <script src="https://notification.randallanjie.com/r_notification.js"></script>
     <script>
         var show = 0;
 
@@ -271,7 +275,7 @@
                 使用方法间左侧<br />
                 showMessage(msg, save, position, autoDisappearTime);`, 0, 'up', 0);
             }
-            copyToClipboard('\<script src="https://randallanjie.com/js/notification.js"\>\</script\>');
+            copyToClipboard('\<script src="https://notification.randallanjie.com/r_notification.js"\>\</script\>');
             showMessage("复制代码成功～", 0, 'up', 2000);
         }
         showMessage('欢迎来到 RNotification 使用说明，感谢您的使用～<br /><a href="https://randallanjie.com/">Powered By Randall | randallanjie.com ©</a>', 0, 'up', 0);
