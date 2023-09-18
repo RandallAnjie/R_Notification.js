@@ -6,6 +6,3 @@
 
 # 使用说明
 详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/使用说明)
-
-# 更新日志
-详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/更新日志)
