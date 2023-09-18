@@ -7,8 +7,6 @@
 # 使用说明
 详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/使用说明)
 
-# 更新日志
-详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/更新日志)
 ## 特性说明
 
 ### 按住 `alt` 键即可选中弹窗气泡中文字，松开鼠标即可复制
