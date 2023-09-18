@@ -1,0 +1,32 @@
+name: Sync Wiki and Template to README
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天运行一次
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Checkout Wiki repository
+      run: |
+        git clone https://github.com/RandallAnjie/RNotification.wiki.git wiki
+
+    - name: Merge content to README
+      run: |
+        cat README_templet.md > README.md
+        echo "\n\n" >> README.md
+        cat wiki/使用说明.md >> README.md
+        echo "\n\n" >> README.md
+        cat wiki/更新日志.md >> README.md
+
+    - name: Commit changes
+      run: |
+        git config user.name "GitHub Action"
+        git config user.email "action@github.com"
+        git add README.md
+        git commit -m "Sync Wiki and Template content to README" || echo "No changes to commit"
+        git push
