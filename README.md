@@ -2,10 +2,10 @@
 一个简单的js弹窗插件
 
 # 项目来源
-本项目来自本人[毕设项目aimage](https://aimage.zhuanjie.ltd/)中的弹窗内容部分，当时弹窗函数写的过分潦草，于是现在拿出来单独写一个js工具
+本项目来自本人项目[aimage](https://aimage.zhuanjie.ltd/)中的弹窗内容部分，当时弹窗函数写的过分潦草，于是现在拿出来单独写一个js工具
+
 
 # 使用说明
-详情请见[项目wiki](https://github.com/RandallAnjie/RNotification/wiki/使用说明)
 
 ## 特性说明
 
@@ -71,6 +71,8 @@ autoDisappearTime 自动消失时间，0 不消失，其他 固定ms消失
 ## 注意
 
 `message` 属性虽然支持传入 `HTML` 片段，但是在网站上动态渲染任意 `HTML` 是非常危险的，因为容易导致 `XSS` 攻击。 因此请确保 `message` 的内容是可信的，永远不要将用户提交的内容赋值给 `message` 属性。由于本项目是js插件，用户能直接在控制台调用 `showMessage` 函数，后期更新将在内部修改进行安全性判定
+# 更新日志
+
 ## V1.8
 
 > 2023-09-17
