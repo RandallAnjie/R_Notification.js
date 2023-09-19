@@ -152,14 +152,14 @@
 &lt;script src="https://notification.randallanjie.com/r_notification.js"&gt;&lt;/script&gt;
 &lt;script&gt;
     // 再在script中调用 showMessage() 方法即可
-    showMessage('我是消息～', 0, 'up', 0);
+    rShowMessage('我是消息～', 0, 'up', 0);
 &lt;/script&gt;
             </pre>
         </div>
         <h4>使用方法2</h4>
         <del>鼠标右键点击选择查看网页源代码</del>
         <h3>参数说明</h3>
-        showMessage(msg, save, position, autoDisappearTime)<br />
+        rShowMessage(msg, save, position, autoDisappearTime)<br />
         message 弹窗内容 支持 HTML 片段<br />
         save 是否保存到sessionStorage中，1 保存，0 不保存<br />
         position 在顶部显示还是在底部显示，up 顶部，down 底部<br />
@@ -174,7 +174,7 @@
         <br />
     </div>
     <div id="version-info">
-        当前版本: V1.8
+        当前版本: V1.9
         <div class="update-details">
             更新日志:
             <br />
@@ -195,6 +195,8 @@
             ·V1.7 2023-09-15 修复弹窗内容过长导致弹窗高度不够的问题
             <br />
             ·V1.8 2023-09-17 修复弹窗残影问题、宽度适配、新增按住alt点击选择文本复制不关闭弹窗、新增控制弹窗在靠近右边和上边时的距离
+            <br />
+            ·V1.9 2023-09-19 封装方法，防止内部变量被外部修改，或者内部方法被外部调用
         </div>
         <div onclick="window.open('https://randallanjie.com/', '_blank');">Powered By Randall</div>
     </div>
@@ -257,7 +259,7 @@
                     }
                 }
             }
-            showMessage(msg, save, position, autoDisappearTime);
+            rShowMessage(msg, save, position, autoDisappearTime);
         }
         async function copyToClipboard(text) {
             try {
@@ -271,17 +273,17 @@
             if (show == 0) {
                 show = 1;
                 document.getElementById('eg').style.display = 'block';
-                showMessage(`感谢使用RNotification<br />
-                使用方法间左侧<br />
-                showMessage(msg, save, position, autoDisappearTime);`, 0, 'up', 0);
+                rShowMessage(`感谢使用RNotification<br />
+                使用方法见左侧<br />
+                rShowMessage(msg, save, position, autoDisappearTime);`, 0, 'up', 0);
             }
             copyToClipboard('\<script src="https://notification.randallanjie.com/r_notification.js"\>\</script\>');
-            showMessage("复制代码成功～", 0, 'up', 2000);
+                rShowMessage("复制代码成功～", 0, 'up', 2000);
         }
-        showMessage('欢迎来到 RNotification 使用说明，感谢您的使用～<br /><a href="https://randallanjie.com/">Powered By Randall | randallanjie.com ©</a>', 0, 'up', 0);
-        showMessage('当前版本V1.8', 0, 'down', 0);
-        showMessage('<b>新功能鉴赏</b><br />1. 按住<pre>alt</pre>键，即可选中弹窗文字，松开后自动复制～<br />2. 在引入本script前设置<pre>var rPaddingTop = 20, rPaddingRight = 20;</pre>可以控制弹窗距离顶部和右侧的高度都为20px嗷～', 0, 'down', 0);
-        showMessage('<b>新版本预告</b><br />1. 加入HTML文本安全性判定', 0, 'down', 0);
+        rShowMessage('欢迎来到 RNotification 使用说明，感谢您的使用～<br /><a href="https://randallanjie.com/">Powered By Randall | randallanjie.com ©</a>', 0, 'up', 0);
+        rShowMessage('当前版本V1.9', 0, 'down', 0);
+        rShowMessage('<b>新功能鉴赏</b><br />1. 按住 alt 键，即可选中弹窗文字，松开后自动复制～<br />2. 在引入本script前设置 rPaddingTop 和 rPaddingRight 可以控制弹窗距离顶部和右侧的高度嗷～', 0, 'down', 0);
+        rShowMessage('<b>新版本预告</b><br />1. 增加模板预设（success、info、warning、error）', 0, 'down', 0);
     </script>
 </body>
 
