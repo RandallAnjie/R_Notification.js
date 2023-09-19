@@ -49,10 +49,10 @@ macOS系统按住 `option` 键有相同效果
     var rPaddingRight = 10; // 距离右边距离，默认20px
 </script>
 <!-- 引入js文件 -->
-<script src="https://randallanjie.com/js/notification.js"></script>
+<script src="https://notification.randallanjie.com/r_notification.js"></script>
 <script>
-    // 再在script中调用 showMessage() 方法即可
-    showMessage('我是消息～', 0, 'up', 0);
+    // 再在script中调用 rShowMessage() 方法即可
+    rShowMessage('我是消息～', 0, 'up', 0);
 </script>
 ```
 
@@ -62,7 +62,7 @@ macOS系统按住 `option` 键有相同效果
 
 ## 参数说明
 
-> showMessage(msg, save, position, autoDisappearTime);
+> rShowMessage(msg, save, position, autoDisappearTime);
 
 message 弹窗内容 支持 HTML 片段
 
@@ -76,6 +76,12 @@ autoDisappearTime 自动消失时间，0 不消失，其他 固定ms消失
 
 `message` 属性虽然支持传入 `HTML` 片段，但是在网站上动态渲染任意 `HTML` 是非常危险的，因为容易导致 `XSS` 攻击。 因此请确保 `message` 的内容是可信的，永远不要将用户提交的内容赋值给 `message` 属性。由于本项目是js插件，用户能直接在控制台调用 `showMessage` 函数，后期更新将在内部修改进行安全性判定
 # 更新日志
+
+## V1.9
+
+> 2023-09-19
+
+封装方法，防止内部变量被外部修改，或者内部方法被外部调用
 
 ## V1.8
 
