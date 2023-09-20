@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>
+        RNotification
+    </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #333;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+
+        a {
+            color: black;
+            text-decoration: none;
+
+            -webkit-transition: 0.15s color ease;
+            -moz-transition: 0.15s color ease;
+            -ms-transition: 0.15s color ease;
+            -o-transition: 0.15s color ease;
+            transition: 0.15s color ease;
+        }
+
+        a:hover {
+            color: #91cd85;
+        }
+
+        #msg {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #msg:focus {
+            border-color: #7aa76d;
+        }
+
+        button {
+            border: 0px;
+            padding: 8px 10px;
+            margin: 5px 0px;
+            border-radius: 1px;
+            outline: 0;
+
+            cursor: pointer;
+            color: #fff;
+            background: #7aa76d;
+            font-size: 15px;
+
+            -webkit-transition: 0.15s background ease;
+            -moz-transition: 0.15s background ease;
+            -ms-transition: 0.15s background ease;
+            -o-transition: 0.15s background ease;
+            transition: 0.15s background ease;
+        }
+
+        button:hover {
+            background: #91cd85;
+        }
+
+        #version-info {
+            text-align: left;
+            position: fixed;
+            left: 0px;
+            bottom: 0px;
+            margin: 20px;
+            padding: 10px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            color: rgba(128, 128, 128, 0.7);
+            z-index: 9999;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-height: 20px;
+        }
+
+        #version-info:hover {
+            color: white;
+            background-color: rgba(128, 128, 128, 0.7);
+            max-height: 100%;
+        }
+
+        .update-details {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #version-info:hover .update-details {
+            opacity: 1;
+            max-height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="">
+        <h2>RNotification</h2>
+        <div>
+            Github仓库: <a href="https://github.com/RandallAnjie/RNotification" target="_blank">点我去往 RNotification </a>
+        </div>
+        <br />
+        <div>
+            <input id="msg" placeholder="请输入弹窗内容" type="text" /><br />
+            <label><input type="checkbox" value="1" class="chackbox"> 是否在消息前加上日期 </label><br />
+            <label><input type="checkbox" value="1" class="chackbox"> 是否存入session </label><br />
+            <label><input type="checkbox" value="1" class="chackbox"> 是否在底部显示（默认顶部） </label><br />
+            <label><input type="checkbox" value="1" class="chackbox"> 是否5秒后消失 </label><br />
+            <button onclick="sendMsg()">发送弹窗</button>
+            <button onclick="howToUse()">使用说明 & 点我复制script代码</button>
+        </div>
+    </div>
+    <br />
+    <br />
+    <div id="eg" style="display: none;">
+        <h3>使用示例</h3>
+        <h4>使用方法1</h4>
+        <div id="code">
+            <pre>
+&lt;script&gt;
+    // V1.8新特性：新增控制弹窗在靠近右边和上边时的距离
+    var rPaddingTop = 10; // 距离顶部距离，默认20px
+    var rPaddingRight = 10; // 距离右边距离，默认20px
+&lt;/script&gt;
+&lt;!-- 引入js文件 --&gt;
+&lt;script src="https://notification.randallanjie.com/r_notification.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+    // 再在script中调用 showMessage() 方法即可
+    rShowMessage('我是消息～', 0, 'up', 0);
+&lt;/script&gt;
+            </pre>
+        </div>
+        <h4>使用方法2</h4>
+        <del>鼠标右键点击选择查看网页源代码</del>
+        <h3>参数说明</h3>
+        rShowMessage(msg, save, position, autoDisappearTime)<br />
+        message 弹窗内容 支持 HTML 片段<br />
+        save 是否保存到sessionStorage中，1 保存，0 不保存<br />
+        position 在顶部显示还是在底部显示，up 顶部，down 底部<br />
+        autoDisappearTime 自动消失时间，0 不消失，其他 固定ms消失<br />
+        <h3>注意</h3>
+        message 属性虽然支持传入 HTML 片段，但是在网站上动态渲染任意 HTML 是非常危险的，因为容易导致 XSS 攻击。 因此在 dangerouslyUseHTMLString 打开的情况下，请确保 message
+        的内容是可信的，永远不要将用户提交的内容赋值给 message 属性。
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+    </div>
+    <div id="version-info">
+        当前版本: Beta
+        <div class="update-details">
+            更新日志:
+            <br />
+            dev版本不显示更新日志
+        </div>
+        <div onclick="window.open('https://randallanjie.com/', '_blank');">Powered By Randall</div>
+    </div>
+    <script>
+        var rPaddingTop = 30;
+        var rPaddingRight = 30;
+    </script>
+    <script src="r_notification_dev.js"></script>
+    <script>
+        var show = 0;
+
+        /**
+         * 获取当前时间
+         * @Author:	Anjie
+         * @Date:	2023-08-17
+         */
+        function getNowTime() {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = now.getMonth();
+            var date = now.getDate();
+            var hour = now.getHours();
+            var minu = now.getMinutes();
+            var sec = now.getSeconds();
+            month = month + 1;
+            if (month < 10) month = "0" + month;
+            if (date < 10) date = "0" + date;
+            if (hour < 10) hour = "0" + hour;
+            if (minu < 10) minu = "0" + minu;
+            if (sec < 10) sec = "0" + sec;
+            return year + "/" + month + "/" + date + " " + hour + ":" + minu + ":" + sec;
+        }
+
+        /**
+         * 发送消息
+         * @Author:	Anjie
+         * @Date:	2023-08-17
+         */
+        function sendMsg() {
+            let msg = document.getElementById('msg').value;
+            let chackbox = document.getElementsByClassName('chackbox');
+            let save = 0;
+            let position = 'up';
+            let autoDisappearTime = 0;
+            for (let i = 0; i < chackbox.length; i++) {
+                if (chackbox[i].checked) {
+                    if (i == 0) {
+                        msg = getNowTime() + ' ' + msg;
+                    }
+                    if (i == 1) {
+                        save = 1;
+                    }
+                    if (i == 2) {
+                        position = 'down';
+                    }
+                    if (i == 3) {
+                        autoDisappearTime = 5000;
+                    }
+                }
+            }
+            rShowMessage(msg, save, position, autoDisappearTime);
+        }
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                console.log('Text copied to clipboard');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }
+        function howToUse() {
+            if (show == 0) {
+                show = 1;
+                document.getElementById('eg').style.display = 'block';
+                rShowMessage(`感谢使用RNotification<br />
+                使用方法见左侧<br />
+                rShowMessage(msg, save, position, autoDisappearTime);`, 0, 'up', 0);
+            }
+            copyToClipboard('\<script src="https://notification.randallanjie.com/r_notification.js"\>\</script\>');
+                rShowMessage("复制代码成功～", 0, 'up', 2000);
+        }
+        rShowMessage('加载完成～', 0, 'down', 0);
+    </script>
+</body>
+
+</html>
