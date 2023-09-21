@@ -23,7 +23,7 @@ if (typeof rNotificationMaxCount == 'undefined') {
 if (typeof rNotificationVersion == 'undefined') {
     var rNotificationVersion = "";
 }
-rNotificationVersion = "V1.9";
+rNotificationVersion = "V2.0";
 
 // 封装方法
 (function () {
@@ -380,7 +380,7 @@ rNotificationVersion = "V1.9";
                 // console.log(text);
                 // 复制选中的文本
                 document.execCommand('copy');
-                showMessage("复制成功～", 0, 'up', 2000);
+                rShowMessage("复制成功～", 0, 'up', 2000);
             }
             // 使得弹窗闪烁一下
             popupLittle.style.boxShadow = '0 0 10px #91cd85';
@@ -421,10 +421,10 @@ rNotificationVersion = "V1.9";
                             </svg>
                         </span>
                         <div style="padding-left:10px; padding-right:10px">
-                            <div style="margin-top: 5px; margin-buttom: 5px; font-size: 20px;">
+                            <div style="margin-top: 2px; margin-buttom: 5px; margin-left: 5px; margin-right: 5px; font-size: 20px;">
                                 ${title}
                             </div>
-                            <div style="margin-top: 5px;">
+                            <div style="margin-top: 5px; margin-left: 5px;">
                                 ${comtain}
                             </div>
                         </div>
@@ -460,10 +460,10 @@ rNotificationVersion = "V1.9";
                             </svg>
                         </span>
                         <div style="padding-left:10px; padding-right:10px">
-                            <div style="margin-top: 5px; margin-buttom: 5px; font-size: 20px;">
+                            <div style="margin-top: 2px; margin-buttom: 5px; margin-left: 5px; margin-right: 5px; font-size: 20px;">
                                 ${title}
                             </div>
-                            <div style="margin-top: 5px;">
+                            <div style="margin-top: 5px; margin-left: 5px;">
                                 ${comtain}
                             </div>
                         </div>
@@ -499,10 +499,10 @@ rNotificationVersion = "V1.9";
                             </svg>
                         </span>
                         <div style="padding-left:10px; padding-right:10px">
-                            <div style="margin-top: 5px; margin-buttom: 5px; font-size: 20px;">
+                            <div style="margin-top: 2px; margin-buttom: 5px; margin-left: 5px; margin-right: 5px; font-size: 20px;">
                                 ${title}
                             </div>
-                            <div style="margin-top: 5px;">
+                            <div style="margin-top: 5px; margin-left: 5px;">
                                 ${comtain}
                             </div>
                         </div>
@@ -538,10 +538,10 @@ rNotificationVersion = "V1.9";
                             </svg>
                         </span>
                         <div style="padding-left:10px; padding-right:10px">
-                            <div style="margin-top: 5px; margin-buttom: 5px; font-size: 20px;">
+                            <div style="margin-top: 2px; margin-buttom: 5px; margin-left: 5px; margin-right: 5px; font-size: 20px;">
                                 ${title}
                             </div>
-                            <div style="margin-top: 5px;">
+                            <div style="margin-top: 5px; margin-left: 5px;">
                                 ${comtain}
                             </div>
                         </div>
@@ -553,7 +553,7 @@ rNotificationVersion = "V1.9";
 
 
     window.rShowMessage = rShowMessage;
-    window.rShowStatusMessage = {
+    window.rStatusMessage = {
         success: rSuccessMessage,
         info: rInfoMessage,
         warning: rWarningMessage,

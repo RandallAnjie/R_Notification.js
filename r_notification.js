@@ -23,7 +23,7 @@ if (typeof rNotificationMaxCount == 'undefined') {
 if (typeof rNotificationVersion == 'undefined') {
     var rNotificationVersion = "";
 }
-rNotificationVersion = "V1.9";
+rNotificationVersion = "V2.0";
 
 // 封装方法
 (function () {
@@ -228,18 +228,6 @@ rNotificationVersion = "V1.9";
         }
     }
 
-    function showMessageInJS(message) {
-        showMessageInJS(message, 0, 'up', 0);
-    }
-
-    function showMessageInJS(message, save) {
-        showMessageInJS(message, save, 'up', 0);
-    }
-
-    function showMessageInJS(message, save, position) {
-        showMessageInJS(message, save, position, 0);
-    }
-
     /**
      * 显示弹窗
      * 2023-09-04 fixed: 重复消息只显示一次
@@ -249,7 +237,7 @@ rNotificationVersion = "V1.9";
      * @param save 是否保存到sessionStorage中，1 保存 0 不保存
      * @param position 在顶部显示还是在底部显示，up 顶部 down 底部
      */
-    function showMessageInJS(message, save, position = 'up', autoDisappearTime = 0) {
+    function showMessageInJS(message, save = 0, position = 'up', autoDisappearTime = 0) {
         let popupText = sessionStorage.getItem('popupText');
         if (popupText) {
             popupText = JSON.parse(popupText);
@@ -392,7 +380,7 @@ rNotificationVersion = "V1.9";
                 // console.log(text);
                 // 复制选中的文本
                 document.execCommand('copy');
-                showMessage("复制成功～", 0, 'up', 2000);
+                rShowMessage("复制成功～", 0, 'up', 2000);
             }
             // 使得弹窗闪烁一下
             popupLittle.style.boxShadow = '0 0 10px #91cd85';
@@ -409,5 +397,166 @@ rNotificationVersion = "V1.9";
             }, autoDisappearTime);
         }
     }
+
+    /**
+     * 成功弹窗预设
+     * @Author:	Anjie
+     * @Date:	2023-09-20
+     * @param {*} comtain 
+     * @param {*} title 
+     * @param {*} save 
+     * @param {*} position 
+     * @param {*} autoDisappearTime 
+     */
+    function rSuccessMessage(comtain, title = '', save = 0, position = 'up', autoDisappearTime = 2000) {
+
+        var msg =
+            `<div>
+                <div>
+                    <div style="display:flex;">
+                        <span role="img" aria-label="check-circle" style="color:#52c41a;">
+                            <svg focusable="false" data-icon="check-circle" width="2em" height="2em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896">
+                                <path d="M699 353h-46.9c-10.2 0-19.9 4.9-25.9 13.3L469 584.3l-71.2-98.8c-6-8.3-15.6-13.3-25.9-13.3H325c-6.5 0-10.3 7.4-6.5 12.7l124.6 172.8a31.8 31.8 0 0051.7 0l210.6-292c3.9-5.3.1-12.7-6.4-12.7z"></path>
+                                <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path>
+                            </svg>
+                        </span>
+                        <div style="padding-left:10px; padding-right:10px">
+                            <div style="margin-top: 2px; margin-buttom: 5px; margin-left: 5px; margin-right: 5px; font-size: 20px;">
+                                ${title}
+                            </div>
+                            <div style="margin-top: 5px; margin-left: 5px;">
+                                ${comtain}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        rShowMessage(msg, save, position, autoDisappearTime)
+    }
+
+    /**
+     * Warning弹窗预设
+     * @Author:	Anjie
+     * @Date:	2023-09-20
+     * @param {*} comtain 
+     * @param {*} title 
+     * @param {*} save 
+     * @param {*} position 
+     * @param {*} autoDisappearTime 
+     */
+    function rInfoMessage(comtain, title = '', save = 0, position = 'up', autoDisappearTime = 2000) {
+        var msg =
+            `<div>
+                <div>
+                    <div style="display:flex;">
+                        <span role="img" aria-label="check-circle" style="color:#1677ff;">
+                            <svg focusable="false" data-icon="check-circle" width="2em" height="2em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896">
+                            <path
+                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z">
+                            </path>
+                            <path
+                                d="M464 688a48 48 0 1096 0 48 48 0 10-96 0zm24-112h48c4.4 0 8-3.6 8-8V296c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8z">
+                            </path>
+                            </svg>
+                        </span>
+                        <div style="padding-left:10px; padding-right:10px">
+                            <div style="margin-top: 2px; margin-buttom: 5px; margin-left: 5px; margin-right: 5px; font-size: 20px;">
+                                ${title}
+                            </div>
+                            <div style="margin-top: 5px; margin-left: 5px;">
+                                ${comtain}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        rShowMessage(msg, save, position, autoDisappearTime)
+    }
+
+    /**
+     * Warning弹窗预设
+     * @Author:	Anjie
+     * @Date:	2023-09-20
+     * @param {*} comtain 
+     * @param {*} title 
+     * @param {*} save 
+     * @param {*} position 
+     * @param {*} autoDisappearTime 
+     */
+    function rWarningMessage(comtain, title = '', save = 0, position = 'up', autoDisappearTime = 2000) {
+        var msg =
+            `<div>
+                <div>
+                    <div style="display:flex;">
+                        <span role="img" aria-label="check-circle" style="color:#faad14;">
+                            <svg focusable="false" data-icon="check-circle" width="2em" height="2em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896">
+                            <path
+                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z">
+                            </path>
+                            <path
+                                d="M464 688a48 48 0 1096 0 48 48 0 10-96 0zm24-112h48c4.4 0 8-3.6 8-8V296c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8z">
+                            </path>
+                            </svg>
+                        </span>
+                        <div style="padding-left:10px; padding-right:10px">
+                            <div style="margin-top: 2px; margin-buttom: 5px; margin-left: 5px; margin-right: 5px; font-size: 20px;">
+                                ${title}
+                            </div>
+                            <div style="margin-top: 5px; margin-left: 5px;">
+                                ${comtain}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        rShowMessage(msg, save, position, autoDisappearTime)
+    }
+
+    /**
+     * Error弹窗预设
+     * @Author:	Anjie
+     * @Date:	2023-09-20
+     * @param {*} comtain 
+     * @param {*} title 
+     * @param {*} save 
+     * @param {*} position 
+     * @param {*} autoDisappearTime 
+     */
+    function rErrorMessage(comtain, title = '', save = 0, position = 'up', autoDisappearTime = 2000) {
+        var msg =
+            `<div>
+                <div>
+                    <div style="display:flex;">
+                        <span role="img" aria-label="check-circle" style="color:#ff4d4f;">
+                            <svg focusable="false" data-icon="check-circle" width="2em" height="2em" fill="currentColor" aria-hidden="true" viewBox="64 64 896 896">
+                            <path
+                                d="M685.4 354.8c0-4.4-3.6-8-8-8l-66 .3L512 465.6l-99.3-118.4-66.1-.3c-4.4 0-8 3.5-8 8 0 1.9.7 3.7 1.9 5.2l130.1 155L340.5 670a8.32 8.32 0 00-1.9 5.2c0 4.4 3.6 8 8 8l66.1-.3L512 564.4l99.3 118.4 66 .3c4.4 0 8-3.5 8-8 0-1.9-.7-3.7-1.9-5.2L553.5 515l130.1-155c1.2-1.4 1.8-3.3 1.8-5.2z">
+                            </path>
+                            <path
+                                d="M512 65C264.6 65 64 265.6 64 513s200.6 448 448 448 448-200.6 448-448S759.4 65 512 65zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z">
+                            </path>
+                            </svg>
+                        </span>
+                        <div style="padding-left:10px; padding-right:10px">
+                            <div style="margin-top: 2px; margin-buttom: 5px; margin-left: 5px; margin-right: 5px; font-size: 20px;">
+                                ${title}
+                            </div>
+                            <div style="margin-top: 5px; margin-left: 5px;">
+                                ${comtain}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        rShowMessage(msg, save, position, autoDisappearTime)
+    }
+
+
     window.rShowMessage = rShowMessage;
+    window.rStatusMessage = {
+        success: rSuccessMessage,
+        info: rInfoMessage,
+        warning: rWarningMessage,
+        error: rErrorMessage
+    }
 })();

@@ -1,5 +1,5 @@
 # RNotification
-一个简单的js弹窗插件
+一个简单的js弹窗插件，本项目旨在帮助一些html项目添加好看的弹窗功能～
 
 [点我去往项目主页及演示](https://notification.randallanjie.com)
 

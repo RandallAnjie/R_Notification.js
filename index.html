@@ -133,7 +133,11 @@
             <label><input type="checkbox" value="1" class="chackbox"> 是否在底部显示（默认顶部） </label><br />
             <label><input type="checkbox" value="1" class="chackbox"> 是否5秒后消失 </label><br />
             <button onclick="sendMsg()">发送弹窗</button>
-            <button onclick="howToUse()">使用说明 & 点我复制script代码</button>
+            <button onclick="howToUse()">使用说明 & 点我复制script代码</button><br />
+            <button onclick="sendStatusMsg('success')">Success弹窗</button>
+            <button onclick="sendStatusMsg('info')">Info弹窗</button>
+            <button onclick="sendStatusMsg('warning')">Warning弹窗</button>
+            <button onclick="sendStatusMsg('error')">Error弹窗</button>
         </div>
     </div>
     <br />
@@ -153,11 +157,16 @@
 &lt;script&gt;
     // 再在script中调用 showMessage() 方法即可
     rShowMessage('我是消息～', 0, 'up', 0);
+
+    // V2.0新特性：能调用预设模板Success、Info、Warning、Error
+    // 注意：内容是必填的，标题是可选的，内容在前，标题在后
+    rStatusMessage.success('我是成功通知内容～', '成功标题');  // 其他三个分别是 info、warning、error
+    rStatusMessage.success('我是成功通知内容～');  // 也可以只传一个参数，这样就没有标题了，其他使用方法与success类似
 &lt;/script&gt;
             </pre>
         </div>
         <h4>使用方法2</h4>
-        <del>鼠标右键点击选择查看网页源代码</del>
+        <del>在本页鼠标右键点击选择查看网页源代码，看看我是怎么用的</del>
         <h3>参数说明</h3>
         rShowMessage(msg, save, position, autoDisappearTime)<br />
         message 弹窗内容 支持 HTML 片段<br />
@@ -174,7 +183,7 @@
         <br />
     </div>
     <div id="version-info">
-        当前版本: V1.9
+        当前版本: V2.0
         <div class="update-details">
             更新日志:
             <br />
@@ -197,6 +206,8 @@
             ·V1.8 2023-09-17 修复弹窗残影问题、宽度适配、新增按住alt点击选择文本复制不关闭弹窗、新增控制弹窗在靠近右边和上边时的距离
             <br />
             ·V1.9 2023-09-19 封装方法，防止内部变量被外部修改，或者内部方法被外部调用
+            <br />
+            ·V2.0 2023-09-21 增加模板预设（success、info、warning、error）
         </div>
         <div onclick="window.open('https://randallanjie.com/', '_blank');">Powered By Randall</div>
     </div>
@@ -278,12 +289,15 @@
                 rShowMessage(msg, save, position, autoDisappearTime);`, 0, 'up', 0);
             }
             copyToClipboard('\<script src="https://notification.randallanjie.com/r_notification.js"\>\</script\>');
-                rShowMessage("复制代码成功～", 0, 'up', 2000);
+            rShowMessage("复制代码成功～", 0, 'up', 2000);
+        }
+        function sendStatusMsg(status){
+            rStatusMessage[status]('我是'+status+'通知内容～', status+'弹窗标题');
         }
         rShowMessage('欢迎来到 RNotification 使用说明，感谢您的使用～<br /><a href="https://randallanjie.com/">Powered By Randall | randallanjie.com ©</a>', 0, 'up', 0);
-        rShowMessage('当前版本V1.9', 0, 'down', 0);
-        rShowMessage('<b>新功能鉴赏</b><br />1. 按住 alt 键，即可选中弹窗文字，松开后自动复制～<br />2. 在引入本script前设置 rPaddingTop 和 rPaddingRight 可以控制弹窗距离顶部和右侧的高度嗷～', 0, 'down', 0);
-        rShowMessage('<b>新版本预告</b><br />1. 增加模板预设（success、info、warning、error）', 0, 'down', 0);
+        rShowMessage('当前版本V2.0', 0, 'down', 0);
+        rShowMessage('<b>新功能鉴赏</b><br />1. 按住 alt 键，即可选中弹窗文字，松开后自动复制～<br />2. 预设success、info、warning、error模板', 0, 'down', 0);
+        rShowMessage('<b>新版本预告</b><br />1. 预计增加可更改弹窗内容模块', 0, 'down', 0);
     </script>
 </body>
 
