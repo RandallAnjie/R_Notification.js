@@ -1,5 +1,5 @@
 # RNotification
-一个简单的js弹窗插件
+一个简单的js弹窗插件，本项目旨在帮助一些html项目添加好看的弹窗功能～
 
 [点我去往项目主页及演示](https://notification.randallanjie.com)
 
@@ -12,6 +12,18 @@
 # 使用说明
 
 ## 特性说明
+
+### 使用预设模板
+
+> V2.0新特性
+
+V2.0新增四个预设模板（success、info、warning、error）
+
+注意：内容是必填的，标题是可选的，内容在前，标题在后
+
+rStatusMessage.success('我是成功通知内容～', '成功标题');  // 其他三个分别是 info、warning、error
+
+rStatusMessage.success('我是成功通知内容～');  // 也可以只传一个参数，这样就没有标题了，其他使用方法与success类似
 
 ### 按住 `alt` 键即可选中弹窗气泡中文字，松开鼠标即可复制
 
@@ -53,12 +65,17 @@ macOS系统按住 `option` 键有相同效果
 <script>
     // 再在script中调用 rShowMessage() 方法即可
     rShowMessage('我是消息～', 0, 'up', 0);
+
+    // V2.0新特性：能调用预设模板Success、Info、Warning、Error
+    // 注意：内容是必填的，标题是可选的，内容在前，标题在后
+    rStatusMessage.success('我是成功通知内容～', '成功标题');  // 其他三个分别是 info、warning、error
+    rStatusMessage.success('我是成功通知内容～');  // 也可以只传一个参数，这样就没有标题了，其他使用方法与success类似
 </script>
 ```
 
 ### 使用方法2
 
-<del>鼠标右键点击选择查看网页源代码</del>
+<del>打开[https://notification.randallanjie.com](https://notification.randallanjie.com)，然后鼠标右键点击选择查看网页源代码，查看官方用法</del>
 
 ## 参数说明
 
@@ -76,6 +93,12 @@ autoDisappearTime 自动消失时间，0 不消失，其他 固定ms消失
 
 `message` 属性虽然支持传入 `HTML` 片段，但是在网站上动态渲染任意 `HTML` 是非常危险的，因为容易导致 `XSS` 攻击。 因此请确保 `message` 的内容是可信的，永远不要将用户提交的内容赋值给 `message` 属性。由于本项目是js插件，用户能直接在控制台调用 `showMessage` 函数，后期更新将在内部修改进行安全性判定
 # 更新日志
+
+## V2.0
+
+> 2023-09-21
+
+增加模板预设（success、info、warning、error）
 
 ## V1.9
 
