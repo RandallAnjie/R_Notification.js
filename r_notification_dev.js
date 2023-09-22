@@ -23,7 +23,7 @@ if (typeof rNotificationMaxCount == 'undefined') {
 if (typeof rNotificationVersion == 'undefined') {
     var rNotificationVersion = "";
 }
-rNotificationVersion = "V2.0";
+rNotificationVersion = "V2.1 Beta";
 
 /**
  * 更换最大保存弹窗数目
