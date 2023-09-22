@@ -25,6 +25,36 @@ if (typeof rNotificationVersion == 'undefined') {
 }
 rNotificationVersion = "V2.0";
 
+/**
+ * 更换最大保存弹窗数目
+ * @Author:	Anjie
+ * @Date:   2023-09-22
+ * @param {int} count 
+ */
+function rChangeNotificationMaxCount(count) {
+    rNotificationMaxCount = count;
+}
+
+/**
+ * 更换距离顶部高度
+ * Author:	Anjie
+ * @Date:   2023-09-22
+ * @param {int} count 
+ */
+function rChangePaddingTop(count) {
+    rPaddingTop = count;
+}
+
+/**
+ * 更换距离右侧高度
+ * Author:	Anjie
+ * @Date:   2023-09-22
+ * @param {int} count 
+ */
+function rChangePaddingRight(count) {
+    rPaddingRight = count;
+}
+
 // 封装方法
 (function () {
 
@@ -551,8 +581,34 @@ rNotificationVersion = "V2.0";
         rShowMessage(msg, save, position, autoDisappearTime)
     }
 
+    /**
+     * Author:	Anjie
+     * @Date:   2023-09-22
+     * 变更某一个弹窗的内容
+     * @param {*} index 
+     * @param {*} message 
+     */
+    function rChangeNotificationMessage(index, message) {
+        // 获取选择的弹窗
+        const popupContainer = document.querySelector('.popup-little-container');
+        const popupLittle = popupContainer.children[index];
+        // 判断弹窗内容是不是在sessionStorage中，如果在，就替换
+        let popupText = sessionStorage.getItem('popupText');
+        if (popupText) {
+            popupText = JSON.parse(popupText);
+            if (popupText.indexOf(popupLittle.textContent) >= 0) {
+                popupText[popupText.indexOf(popupLittle.textContent)] = message;
+                sessionStorage.setItem('popupText', JSON.stringify(popupText));
+            }
+        }
+        // 替换弹窗内容
+        popupLittle.innerHTML = message;
+    }
+
+
 
     window.rShowMessage = rShowMessage;
+    window.rChangeMessage = rChangeNotificationMessage;
     window.rStatusMessage = {
         success: rSuccessMessage,
         info: rInfoMessage,
