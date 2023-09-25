@@ -138,6 +138,8 @@
             <button onclick="sendStatusMsg('info')">Info弹窗</button>
             <button onclick="sendStatusMsg('warning')">Warning弹窗</button>
             <button onclick="sendStatusMsg('error')">Error弹窗</button>
+            <br />
+            <button onclick="sendChangeableMessage()" id="change_contain">发送可更改内容弹窗</button>
         </div>
     </div>
     <br />
@@ -183,7 +185,7 @@
         <br />
     </div>
     <div id="version-info">
-        当前版本: V2.0
+        当前版本: V2.1
         <div class="update-details">
             更新日志:
             <br />
@@ -208,6 +210,8 @@
             ·V1.9 2023-09-19 封装方法，防止内部变量被外部修改，或者内部方法被外部调用
             <br />
             ·V2.0 2023-09-21 增加模板预设（success、info、warning、error）
+            <br />
+            ·V2.1 2023-09-25 增加更改弹窗内容模块
         </div>
         <div onclick="window.open('https://randallanjie.com/', '_blank');">Powered By Randall</div>
     </div>
@@ -218,6 +222,7 @@
     </script>
     <!-- 没错，就是下面的这一行 -->
     <script src="https://notification.randallanjie.com/r_notification.js"></script>
+<!--    <script src="r_notification.js"></script>-->
     <script>
         var show = 0;
 
@@ -275,9 +280,9 @@
         async function copyToClipboard(text) {
             try {
                 await navigator.clipboard.writeText(text);
-                console.log('Text copied to clipboard');
+                rStatusMessage.success("您已成功复制：" + text, "复制代码成功～");
             } catch (err) {
-                console.error('Failed to copy text: ', err);
+                rStatusMessage.error(err, "复制代码错误", 0, 'up', 0);
             }
         }
         function howToUse() {
@@ -288,16 +293,33 @@
                 使用方法见左侧<br />
                 rShowMessage(msg, save, position, autoDisappearTime);`, 0, 'up', 0);
             }
-            copyToClipboard('\<script src="https://notification.randallanjie.com/r_notification.js"\>\</script\>');
-            rShowMessage("复制代码成功～", 0, 'up', 2000);
+            copyToClipboard(`\<script src="https://notification.randallanjie.com/r_notification.js"\>\</script\>`);
         }
         function sendStatusMsg(status){
             rStatusMessage[status]('我是'+status+'通知内容～', status+'弹窗标题');
         }
+
+        function sendChangeableMessage(){
+            var num = rShowMessage('我是修改之前的消息～', 0, 'up', 0);
+            // 修改按钮上的文字
+            document.getElementById('change_contain').innerHTML = '修改弹窗内容';
+            // 修改onclick事件
+            document.getElementById('change_contain').onclick = function(){
+                rChangeMessage(num, '我是修改之后的消息～啦啦啦啦啦啦啦啦啦～');
+                // 修改回按钮上的文字
+                document.getElementById('change_contain').innerHTML = '发送可更改内容弹窗';
+                // 修改回onclick事件
+                document.getElementById('change_contain').onclick = function(){
+                    sendChangeableMessage();
+                }
+            }
+        }
+
+
         rShowMessage('欢迎来到 RNotification 使用说明，感谢您的使用～<br /><a href="https://randallanjie.com/">Powered By Randall | randallanjie.com ©</a>', 0, 'up', 0);
-        rShowMessage('当前版本V2.0', 0, 'down', 0);
+        rShowMessage('当前版本V2.1', 0, 'down', 0);
         rShowMessage('<b>新功能鉴赏</b><br />1. 按住 alt 键，即可选中弹窗文字，松开后自动复制～<br />2. 预设success、info、warning、error模板', 0, 'down', 0);
-        rShowMessage('<b>新版本预告</b><br />1. 预计增加可更改弹窗内容模块', 0, 'down', 0);
+        // rShowMessage('<b>新版本预告</b><br />别看了，没想到什么好更新的了，已经很完善了', 0, 'down', 0);
     </script>
 </body>
 

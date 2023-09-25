@@ -23,7 +23,43 @@ if (typeof rNotificationMaxCount == 'undefined') {
 if (typeof rNotificationVersion == 'undefined') {
     var rNotificationVersion = "";
 }
-rNotificationVersion = "V2.0";
+rNotificationVersion = "V2.1";
+
+/**
+ * 更换最大保存弹窗数目
+ * @Author:	Anjie
+ * @Date:   2023-09-22
+ * @param {int} count
+ */
+function rChangeNotificationMaxCount(count) {
+    rNotificationMaxCount = count;
+}
+
+/**
+ * 更换距离顶部高度
+ * Author:	Anjie
+ * @Date:   2023-09-22
+ * @param {int} count
+ */
+function rChangePaddingTop(count) {
+    rPaddingTop = count;
+}
+
+/**
+ * 更换距离右侧高度
+ * Author:	Anjie
+ * @Date:   2023-09-22
+ * @param {int} count
+ */
+function rChangePaddingRight(count) {
+    rPaddingRight = count;
+}
+
+// 队列存储随机字符串
+var rRandomStrQueue = [];
+
+// 存储随机字符串和对应的弹窗
+var rNotificationDict = {};
 
 // 封装方法
 (function () {
@@ -70,25 +106,6 @@ rNotificationVersion = "V2.0";
         `;
 
         document.head.appendChild(style);
-        // // 滚动条滑块
-        // style = document.createElement("style");
-        // style.innerHTML = `
-        //     .popup-little-container::-webkit-scrollbar-thumb {
-        //         border-radius: 10px;
-        //         background-color: rgba(0, 0, 0, 0.2);
-        //         background-clip: padding-box;
-        //         border: 2px solid transparent;
-        //     }`;
-        // document.head.appendChild(style);
-        // // 滚动条轨道
-        // style = document.createElement("style");
-        // style.innerHTML = `
-        //     .popup-little-container::-webkit-scrollbar-track {
-        //         background-color: transparent;
-        //         border-radius: 10px;
-        //         box-shadow: inset 0px 0px 5px white;
-        //     }`;
-        // document.head.appendChild(style);
 
         document.body.appendChild(div);
         var style = document.createElement("style");
@@ -127,14 +144,22 @@ rNotificationVersion = "V2.0";
         console.info(`您已经成功加载弹窗插件\n当前版本：${rNotificationVersion}\n详细使用方法及细节: https://notification.randallanjie.com/ \n仓库地址: https://github.com/RandallAnjie/RNotification \nCopyright randallanjie.com © . All rights reserved.\nAuthor: Randall\nWebsite: https://randallanjie.com`);
     });
 
+    /**
+     * 显示弹窗（安全判定）
+     * @Author:	Anjie
+     * @Date:	2023-08-17
+     */
     function rShowMessage() {
         var args = Array.prototype.slice.call(arguments);
+        var num = Math.random().toString(36).substr(2);
+        rRandomStrQueue.push(num);
         if (document.readyState === "loading") {
             // 如果尚未加载DOM，将其推入showMessageQueue
             showMessageQueue.push(args);
+            return num;
         } else {
             // 否则直接运行
-            showMessageInJS.apply(null, args);
+            return showMessageInJS.apply(null, args);
         }
     }
 
@@ -187,37 +212,19 @@ rNotificationVersion = "V2.0";
      * 处理弹窗的移除
      * @Author:	Anjie
      * @Date:	2023-09-15
-     * @param {*} popupElement 
-     * @param {*} height 
+     * @param popupElement
+     * @param height
      */
     function handleRemoval(popupElement, height) {
         const popupContainer = document.querySelector('.popup-little-container');
-        // const firstElement = popupContainer.children[0];
-        // if(firstElement === popupElement || firstElement.friend === popupElement) {
-        //     height+=10;
-        // }
         popupElement.style.opacity = 0;
         popupElement.style.marginBottom = `-${height + 10}px`;
-        // popupElement.friend.style.opacity = 0;
-        // popupElement.friend.style.marginBottom = `-${height+10}px`;
         setTimeout(() => {
             if (!popupElement.isRemoved && popupContainer.contains(popupElement)) {
-                // 判断popupElement是在popupContainer中还是在body中
-                // if (popupElement.parentElement === popupContainer) {
-                //     popupContainer.removeChild(popupElement);
-                //     if (document.body.contains(popupElement.friend)) { // 确保friend是body的子元素
-                //         document.body.removeChild(popupElement.friend);
-                //     }
-                // } else if (document.body.contains(popupElement)) { // 确保popupElement是body的子元素
-                //     document.body.removeChild(popupElement);
-                //     popupContainer.removeChild(popupElement.friend);
-                // }
                 popupContainer.removeChild(popupElement);
                 popupElement.isRemoved = true;
-                // popupElement.friend.isRemoved = true;
             }
         }, 1000);
-
         // 从sessionStorage中删除当前消息
         let popupText = sessionStorage.getItem('popupText');
         let tempMessage = popupElement.textContent;
@@ -225,6 +232,12 @@ rNotificationVersion = "V2.0";
             popupText = JSON.parse(popupText);
             popupText = popupText.filter(item => item != tempMessage);
             sessionStorage.setItem('popupText', JSON.stringify(popupText));
+        }
+        // 从字典中删除当前消息
+        for (var key in rNotificationDict) {
+            if (rNotificationDict[key] == popupElement) {
+                delete rNotificationDict[key];
+            }
         }
     }
 
@@ -236,6 +249,7 @@ rNotificationVersion = "V2.0";
      * @param message
      * @param save 是否保存到sessionStorage中，1 保存 0 不保存
      * @param position 在顶部显示还是在底部显示，up 顶部 down 底部
+     * @param autoDisappearTime 自动消失时间，单位毫秒，0为不消失
      */
     function showMessageInJS(message, save = 0, position = 'up', autoDisappearTime = 0) {
         let popupText = sessionStorage.getItem('popupText');
@@ -247,58 +261,6 @@ rNotificationVersion = "V2.0";
         }
         const popupContainer = document.querySelector('.popup-little-container');
         const popupLittle = createPopupElement(message, save);
-
-        // 绑定元素
-        // const animateFlyIn = (element, animationName) => {
-        //     const clone = element.cloneNode(true);
-
-        //     clone.addclass = 'test';
-
-        //     clone.addEventListener('click', () => {
-        //         const rect = popupLittle.getBoundingClientRect();
-        //         const height = rect.height;
-        //         handleRemoval(popupLittle, height);
-        //         // if (clone.parentElement) {
-        //         //     document.body.removeChild(clone);  // 同时删除复制的元素
-        //         // }
-        //     });
-
-        //     document.body.appendChild(clone);
-
-        //     const animationDuration = 1000;  // 假设动画持续时间为1秒
-
-        //     const updatePosition = () => {
-        //         const rect = element.getBoundingClientRect();
-        //         clone.style.top = `${rect.top-10}px`;
-        //         clone.style.left = `${rect.left-10}px`;
-        //         clone.style.position = 'fixed';
-        //         clone.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
-        //         // 设置背景颜色为透明
-        //         clone.backgroundColor = 'transparent';
-        //         // clone.style.color = 'transparent';
-        //         clone.style.zIndex = '8888';
-
-        //         clone.friend = popupLittle;
-        //         popupLittle.friend = clone;
-
-        //         clone.style.pointerEvents = 'none';
-
-
-        //         if (clone.parentElement) {
-        //             requestAnimationFrame(updatePosition);
-        //         }
-        //     };
-
-        //     requestAnimationFrame(updatePosition);
-
-        //     // setTimeout(() => {
-        //     //     clone.style.boxShadow = 'none';
-
-        //     //     setTimeout(() => {
-        //     //         document.body.removeChild(clone);
-        //     //     }, 5000);
-        //     // }, animationDuration);
-        // };
 
         if (position === 'up') {
             popupContainer.prepend(popupLittle);
@@ -351,16 +313,6 @@ rNotificationVersion = "V2.0";
                 popupLittle.style.marginBottom = '10px';
             }, 10);
         }
-        // setTimeout(() => {
-        //     popupLittle.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
-        // }, 5000);
-
-        // popupLittle.addEventListener('click', () => {
-        //     const rect = popupLittle.getBoundingClientRect();
-        //     const height = rect.height;
-        //     handleRemoval(popupLittle, height);
-        // });
-
         // 添加点击事件，判断点击的时候是否有是按下了alt键，如果是，等松开alt键后复制选中的文本
         popupLittle.addEventListener('mousedown', (e) => {
             if (e.altKey) {
@@ -377,10 +329,14 @@ rNotificationVersion = "V2.0";
             const selection = window.getSelection();
             const text = selection.toString();
             if (text) {
-                // console.log(text);
                 // 复制选中的文本
-                document.execCommand('copy');
-                rShowMessage("复制成功～", 0, 'up', 2000);
+                try {
+                    navigator.clipboard.writeText(text).then(r => {
+                        rStatusMessage.success("您已成功复制：" + text, "复制代码成功～");
+                    });
+                } catch (err) {
+                    rStatusMessage.error(err, "复制代码错误", 0, 'up', 0);
+                }
             }
             // 使得弹窗闪烁一下
             popupLittle.style.boxShadow = '0 0 10px #91cd85';
@@ -396,20 +352,24 @@ rNotificationVersion = "V2.0";
                 handleRemoval(popupLittle, height);
             }, autoDisappearTime);
         }
+
+        // 保存到字典中，取出rRandomStrQueue中的第一个随机字符串
+        var randomString = rRandomStrQueue.shift();
+        rNotificationDict[randomString] = popupLittle;
+        return randomString;
     }
 
     /**
-     * 成功弹窗预设
+     * Success弹窗预设
      * @Author:	Anjie
      * @Date:	2023-09-20
-     * @param {*} comtain 
-     * @param {*} title 
-     * @param {*} save 
-     * @param {*} position 
-     * @param {*} autoDisappearTime 
+     * @param comtain
+     * @param title
+     * @param save
+     * @param position
+     * @param autoDisappearTime
      */
     function rSuccessMessage(comtain, title = '', save = 0, position = 'up', autoDisappearTime = 2000) {
-
         var msg =
             `<div>
                 <div>
@@ -431,18 +391,18 @@ rNotificationVersion = "V2.0";
                     </div>
                 </div>
             </div>`;
-        rShowMessage(msg, save, position, autoDisappearTime)
+        return rShowMessage(msg, save, position, autoDisappearTime)
     }
 
     /**
-     * Warning弹窗预设
+     * Info弹窗预设
      * @Author:	Anjie
      * @Date:	2023-09-20
-     * @param {*} comtain 
-     * @param {*} title 
-     * @param {*} save 
-     * @param {*} position 
-     * @param {*} autoDisappearTime 
+     * @param comtain
+     * @param title
+     * @param save
+     * @param position
+     * @param autoDisappearTime
      */
     function rInfoMessage(comtain, title = '', save = 0, position = 'up', autoDisappearTime = 2000) {
         var msg =
@@ -470,18 +430,18 @@ rNotificationVersion = "V2.0";
                     </div>
                 </div>
             </div>`;
-        rShowMessage(msg, save, position, autoDisappearTime)
+        return rShowMessage(msg, save, position, autoDisappearTime)
     }
 
     /**
      * Warning弹窗预设
      * @Author:	Anjie
      * @Date:	2023-09-20
-     * @param {*} comtain 
-     * @param {*} title 
-     * @param {*} save 
-     * @param {*} position 
-     * @param {*} autoDisappearTime 
+     * @param comtain
+     * @param title
+     * @param save
+     * @param position
+     * @param autoDisappearTime
      */
     function rWarningMessage(comtain, title = '', save = 0, position = 'up', autoDisappearTime = 2000) {
         var msg =
@@ -509,18 +469,18 @@ rNotificationVersion = "V2.0";
                     </div>
                 </div>
             </div>`;
-        rShowMessage(msg, save, position, autoDisappearTime)
+        return rShowMessage(msg, save, position, autoDisappearTime)
     }
 
     /**
      * Error弹窗预设
-     * @Author:	Anjie
-     * @Date:	2023-09-20
-     * @param {*} comtain 
-     * @param {*} title 
-     * @param {*} save 
-     * @param {*} position 
-     * @param {*} autoDisappearTime 
+     * @Author: Anjie
+     * @Date:   2023-09-20
+     * @param comtain
+     * @param title
+     * @param save
+     * @param position
+     * @param autoDisappearTime
      */
     function rErrorMessage(comtain, title = '', save = 0, position = 'up', autoDisappearTime = 2000) {
         var msg =
@@ -548,11 +508,40 @@ rNotificationVersion = "V2.0";
                     </div>
                 </div>
             </div>`;
-        rShowMessage(msg, save, position, autoDisappearTime)
+        return rShowMessage(msg, save, position, autoDisappearTime)
     }
 
+    /**
+     * 变更某一个弹窗的内容
+     * @Author: Anjie
+     * @Date:   2023-09-22
+     * @param index
+     * @param message
+     */
+    function rChangeNotificationMessage(index, message) {
+        // 获取选择的弹窗
+        const popupContainer = document.querySelector('.popup-little-container');
+        const popupLittle = rNotificationDict[index];
+        // 判断弹窗内容是不是在sessionStorage中，如果在，就替换
+        let popupText = sessionStorage.getItem('popupText');
+        if (popupText) {
+            popupText = JSON.parse(popupText);
+            if (popupText.indexOf(popupLittle.textContent) >= 0) {
+                popupText[popupText.indexOf(popupLittle.textContent)] = message;
+                sessionStorage.setItem('popupText', JSON.stringify(popupText));
+            }
+        }
+        // 替换弹窗内容
+        popupLittle.innerHTML = message;
+        // 使得弹窗闪烁一下
+        popupLittle.style.boxShadow = '0 0 10px #91cd85';
+        setTimeout(() => {
+            popupLittle.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
+        }, 500);
+    }
 
     window.rShowMessage = rShowMessage;
+    window.rChangeMessage = rChangeNotificationMessage;
     window.rStatusMessage = {
         success: rSuccessMessage,
         info: rInfoMessage,
