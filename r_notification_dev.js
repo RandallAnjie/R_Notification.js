@@ -68,25 +68,27 @@ var rNotificationDict = {};
     var showMessageQueue = [];
 
     document.addEventListener("DOMContentLoaded", function () {
-        var div = document.createElement("div");
-        div.className = "popup-little-container";
-        div.style.position = "fixed";
-        div.style.top = "0";
-        div.style.right = "0";
-        div.style.paddingTop = `${rPaddingTop}px`;
-        div.style.paddingRight = `${rPaddingRight}px`;
-        div.style.zIndex = "9888";
-        // 设置最大宽度为100%减去2倍的padding
-        div.style.maxWidth = `calc(100vw - ${rPaddingRight * 2}px)`;
-        div.style.width = "380px";
-        div.style.height = "100%";
-        div.style.overflow = "auto";
-        div.style.scrollBehavior = "smooth";
-        // 设置 maxHeight 为 100% 屏幕高减去 top
-        div.style.maxHeight = `calc(100vh - ${div.style.top} * 2)`;
-        // 设置滚动条样式
+        // 创建 style 元素
         var style = document.createElement("style");
         style.innerHTML = `
+            .popup-little-container {
+                position: fixed;
+                top: 0;
+                right: 0;
+                padding-top: var(--rPaddingTop);
+                padding-right: var(--rPaddingRight);
+                z-index: 9888;
+                max-width: calc(100vw - var(--rPaddingRight) * 2);
+                width: 380px;
+                height: 100%;
+                overflow: auto;
+                scroll-behavior: smooth;
+                max-height: calc(100vh - var(--top) * 2);
+                pointer-events: none;  /* 设置div点击穿透，但是子元素不穿透 */
+            }
+            .popup-little-container * {
+                pointer-events: auto;
+            }
             .popup-little-container::-webkit-scrollbar {
                 display: none; /* WebKit 浏览器*/
             }
@@ -94,22 +96,53 @@ var rNotificationDict = {};
                 scrollbar-width: none; /* Firefox */
                 -ms-overflow-style: none; /* IE 和 Edge */
             }
-        `;
-        // 设置div点击穿透，但是子元素不穿透
-        style.innerHTML += `
-            .popup-little-container {
-                pointer-events: none;
+            
+            .popup-little {
+                position: relative;
+                vertical-align: middle;
+                overflow: hidden;
+                background:hsla(0,0%,100%,.25) border-box;
+                box-shadow:0 0 0 1px hsla(0,0%,100%,.3) inset, 0px 0em 10px rgba(0,0,0,0.6);
+                /* text-shadow:0 1px 1px hsla(0,0%,100%,.3); */
+                border-radius: 10px;
+                box-sizing: border-box;
+                color: black;
+                font-size: medium;
+                /* background-color: #fff; */
+                border-radius: 8px;
+                padding: 10px;
+                width: calc(100% - 40px);
+                margin-left: 10px;
+                margin-bottom: 0px;
+                margin-top: 10px;
+                transition: opacity 0.5s linear,width 0.5s linear, height 0.5s 0.5s linear, margin-bottom 0.5s 0.5s linear, margin-top 1s cubic-bezier(0, 0.5, 0.5, 1), box-shadow 0.5s linear;
+                overflow: hidden;
+                /* position: absolute */
+                z-index: 9988;
             }
-            .popup-little-container * {
-                pointer-events: auto;
+            
+            .popup-little::before {
+                display: block;
+                position: absolute;
+                content: '';
+                width: 120%;
+                height: 120%;
+                top: 0;
+                left: 0;
+                background: inherit;
+                filter: blur(20px);
+                margin: -5%;
+                z-index: 9987;
             }
-        `;
-
-        document.head.appendChild(style);
-
-        document.body.appendChild(div);
-        var style = document.createElement("style");
-        style.innerHTML = `
+            
+            .popup-little * {
+                position: relative;
+                color: #000;
+                z-index: 10;
+                font-size: 24px;
+                line-height: 1.5;
+            }
+            
             @keyframes flyInFromRight {
                 from {
                     transform: translateX(100%);
@@ -127,7 +160,18 @@ var rNotificationDict = {};
                 }
             }
         `;
+
+        // 将 style 元素添加到 document 的 head 中
         document.head.appendChild(style);
+
+        // 创建 div 元素
+        var div = document.createElement("div");
+        div.className = "popup-little-container";
+        div.style.setProperty('--rPaddingTop', `${rPaddingTop}px`);
+        div.style.setProperty('--rPaddingRight', `${rPaddingRight}px`);
+        div.style.setProperty('--top', div.style.top);
+
+        document.body.appendChild(div);
 
         // 页面加载时，显示sessionStorage中的消息
         let popupText = sessionStorage.getItem('popupText');
@@ -190,21 +234,9 @@ var rNotificationDict = {};
         popupLittle.className = 'popup-little';
         popupLittle.innerHTML = text;
         // const height = popupLittle.offsetHeight;
-        popupLittle.style.cssText = `
-                    font-size: medium;
-                    background-color: #fff;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    border-radius: 8px;
-                    padding: 10px;
-                    width: calc(100% - 40px);
-                    margin-left: 10px;
-                    margin-bottom: 0px;
-                    margin-top: 10px;
-                    transition: opacity 0.5s linear,width 0.5s linear, height 0.5s 0.5s linear, margin-bottom 0.5s 0.5s linear, margin-top 1s cubic-bezier(0, 0.5, 0.5, 1), box-shadow 0.5s linear;
-                    overflow: hidden;
-                    /* position: absolute */
-                    z-index: 9988;
-                `;
+        // popupLittle.style.cssText = `
+        //
+        //         `;
         return popupLittle;
     }
 
