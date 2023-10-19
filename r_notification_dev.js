@@ -455,6 +455,60 @@ document.addEventListener('mouseup', function (e) {
             }
         });
 
+        // 添加触摸事件
+        popupLittle.addEventListener('touchstart', (e) => {
+            console.log('touchstart');
+            popupLittle.style.transition = 'none';
+            // 设置不允许选中任何文本
+            document.onselectstart = function () {
+                return false;
+            }
+            // 设置允许拖动弹窗，只允许水平移动，修改他的marginLeft，让弹窗实时跟随鼠标移动
+            // 获取当前弹窗的marginLeft
+            const marginLeft = parseInt(window.getComputedStyle(popupLittle).marginLeft);
+            const zIndex = parseInt(window.getComputedStyle(popupLittle).zIndex);
+            console.log(marginLeft);
+            popupLittle.style.zIndex = '9999';
+            // 获取鼠标当前位置
+            const startX = e.touches[0].clientX;
+            // 弹窗跟随鼠标移动
+            document.ontouchmove = function (e) {
+                const endX = e.touches[0].clientX;
+                popupLittle.style.marginLeft = `${marginLeft + endX - startX}px`;
+            };
+            // 鼠标松开时，取消拖动
+            document.ontouchend = function () {
+                document.ontouchmove = null;
+                document.ontouchend = null;
+                // 设置允许选中任何文本
+                document.onselectstart = function () {
+                    return true;
+                }
+                popupLittle.style.transition = `
+                    opacity 0.5s linear, 
+                    height 0.5s 0.5s linear, 
+                    margin-bottom 0.5s 0.5s linear, 
+                    margin-top 1s cubic-bezier(0, 0.5, 0.5, 1), 
+                    margin-left 1s cubic-bezier(0, 0.5, 0.5, 1),
+                    box-shadow 0.5s linear
+                `;
+                const rect = popupLittle.getBoundingClientRect();
+                const width = rect.width;
+                console.log(parseInt(window.getComputedStyle(popupLittle).marginLeft));
+                if (parseInt(window.getComputedStyle(popupLittle).marginLeft)-marginLeft > width / 3) {
+                    handleRemoval(popupLittle, rect.height);
+                } else if(marginLeft - parseInt(window.getComputedStyle(popupLittle).marginLeft) > 10) {
+                    changePinStatus(popupLittle);
+                    // 弹窗回到原来的位置
+                    popupLittle.style.marginLeft = `${marginLeft}px`;
+                    popupLittle.style.zIndex = `${zIndex}`;
+                }else {
+                    popupLittle.style.marginLeft = `${marginLeft}px`;
+                    popupLittle.style.zIndex = `${zIndex}`;
+                }
+            }
+        });
+
         if (autoDisappearTime > 0) {
             popupLittle.timeOut = setTimeout(() => {
                 const rect = popupLittle.getBoundingClientRect();
