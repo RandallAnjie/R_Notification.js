@@ -492,7 +492,6 @@ document.addEventListener('mouseup', function (e) {
                 `;
                 const rect = popupLittle.getBoundingClientRect();
                 const width = rect.width;
-                console.log(parseInt(window.getComputedStyle(popupLittle).marginLeft));
                 if (parseInt(window.getComputedStyle(popupLittle).marginLeft)-marginLeft > width / 3) {
                     handleRemoval(popupLittle, rect.height);
                 } else if(marginLeft - parseInt(window.getComputedStyle(popupLittle).marginLeft) > 10) {
