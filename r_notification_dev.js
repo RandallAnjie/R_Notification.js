@@ -23,7 +23,7 @@ if (typeof rNotificationMaxCount == 'undefined') {
 if (typeof rNotificationVersion == 'undefined') {
     var rNotificationVersion = "";
 }
-rNotificationVersion = "V2.1";
+rNotificationVersion = "V2.2 Beta";
 
 /**
  * 更换最大保存弹窗数目
@@ -61,6 +61,41 @@ var rRandomStrQueue = [];
 // 存储随机字符串和对应的弹窗
 var rNotificationDict = {};
 
+var mouthPosition = {}
+
+// 如果拖动了链接标签，取消跳转，对于a标签只监听点击事项，不监听拖动事项，如果点击了a标签之后拖动，取消跳转
+document.addEventListener('dragstart', function (e) {
+    if (e.target.tagName === 'A') {
+        e.preventDefault();
+    }
+});
+
+document.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+        e.preventDefault();
+    }
+});
+
+document.addEventListener('mousedown', function (e) {
+    mouthPosition = {
+        x: e.clientX,
+        y: e.clientY
+    };
+});
+
+document.addEventListener('mouseup', function (e) {
+    const endPosition = {
+        x: e.clientX,
+        y: e.clientY
+    }
+    if (mouthPosition.x === endPosition.x || mouthPosition.y === endPosition.y) {
+        if (e.target.tagName === 'A') {
+            // 跳转到新页面
+            window.open(e.target.href);
+        }
+    }
+});
+
 // 封装方法
 (function () {
 
@@ -68,27 +103,28 @@ var rNotificationDict = {};
     var showMessageQueue = [];
 
     document.addEventListener("DOMContentLoaded", function () {
-        // 创建 style 元素
+        var div = document.createElement("div");
+        div.className = "popup-little-container";
+        div.style.position = "fixed";
+        div.style.top = "0";
+        div.style.right = "0";
+        div.style.paddingTop = `${rPaddingTop}px`;
+        div.style.paddingRight = `${rPaddingRight}px`;
+        div.style.zIndex = "9888";
+        // 设置最大宽度为100%减去2倍的padding
+        div.style.maxWidth = `calc(100vw - ${rPaddingRight * 2}px)`;
+        div.style.width = "380px";
+        div.style.height = "100%";
+        div.style.overflow = "auto";
+        div.style.scrollBehavior = "smooth";
+        // 设置 maxHeight 为 100% 屏幕高减去 top
+        div.style.maxHeight = `calc(100vh - ${div.style.top} * 2)`;
+
+        document.body.appendChild(div);
+
+        // 设置滚动条样式
         var style = document.createElement("style");
         style.innerHTML = `
-            .popup-little-container {
-                position: fixed;
-                top: 0;
-                right: 0;
-                padding-top: var(--rPaddingTop);
-                padding-right: var(--rPaddingRight);
-                z-index: 9888;
-                max-width: calc(100vw - var(--rPaddingRight) * 2);
-                width: 380px;
-                height: 100%;
-                overflow: auto;
-                scroll-behavior: smooth;
-                max-height: calc(100vh - var(--top) * 2);
-                pointer-events: none;  /* 设置div点击穿透，但是子元素不穿透 */
-            }
-            .popup-little-container * {
-                pointer-events: auto;
-            }
             .popup-little-container::-webkit-scrollbar {
                 display: none; /* WebKit 浏览器*/
             }
@@ -96,53 +132,18 @@ var rNotificationDict = {};
                 scrollbar-width: none; /* Firefox */
                 -ms-overflow-style: none; /* IE 和 Edge */
             }
-            
-            .popup-little {
-                position: relative;
-                vertical-align: middle;
-                overflow: hidden;
-                background:hsla(0,0%,100%,.25) border-box;
-                box-shadow:0 0 0 1px hsla(0,0%,100%,.3) inset, 0px 0em 10px rgba(0,0,0,0.6);
-                /* text-shadow:0 1px 1px hsla(0,0%,100%,.3); */
-                border-radius: 10px;
-                box-sizing: border-box;
-                color: black;
-                font-size: medium;
-                /* background-color: #fff; */
-                border-radius: 8px;
-                padding: 10px;
-                width: calc(100% - 40px);
-                margin-left: 10px;
-                margin-bottom: 0px;
-                margin-top: 10px;
-                transition: opacity 0.5s linear,width 0.5s linear, height 0.5s 0.5s linear, margin-bottom 0.5s 0.5s linear, margin-top 1s cubic-bezier(0, 0.5, 0.5, 1), box-shadow 0.5s linear;
-                overflow: hidden;
-                /* position: absolute */
-                z-index: 9988;
+        `;
+        // 设置div点击穿透，但是子元素不穿透
+        style.innerHTML += `
+            .popup-little-container {
+                pointer-events: none;
             }
-            
-            .popup-little::before {
-                display: block;
-                position: absolute;
-                content: '';
-                width: 120%;
-                height: 120%;
-                top: 0;
-                left: 0;
-                background: inherit;
-                filter: blur(20px);
-                margin: -5%;
-                z-index: 9987;
+            .popup-little-container * {
+                pointer-events: auto;
             }
-            
-            .popup-little * {
-                position: relative;
-                color: #000;
-                z-index: 10;
-                font-size: 24px;
-                line-height: 1.5;
-            }
-            
+        `;
+        // 设置弹窗动画
+        style.innerHTML += `
             @keyframes flyInFromRight {
                 from {
                     transform: translateX(100%);
@@ -160,18 +161,32 @@ var rNotificationDict = {};
                 }
             }
         `;
-
-        // 将 style 元素添加到 document 的 head 中
+        // 设置popupLittle的样式
+        style.innerHTML += `
+            .popup-little {
+                font-size: medium;
+                background-color: #fff;
+                color: #000;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                padding: 10px;
+                width: calc(100% - 40px);
+                margin-left: 10px;
+                margin-bottom: 0px;
+                margin-top: 10px;
+                overflow: hidden;
+                /* position: absolute */
+                z-index: 9988;
+            }
+            
+            .popup-little-content {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                height: 100%;
+            }
+        `;
         document.head.appendChild(style);
-
-        // 创建 div 元素
-        var div = document.createElement("div");
-        div.className = "popup-little-container";
-        div.style.setProperty('--rPaddingTop', `${rPaddingTop}px`);
-        div.style.setProperty('--rPaddingRight', `${rPaddingRight}px`);
-        div.style.setProperty('--top', div.style.top);
-
-        document.body.appendChild(div);
 
         // 页面加载时，显示sessionStorage中的消息
         let popupText = sessionStorage.getItem('popupText');
@@ -232,11 +247,23 @@ var rNotificationDict = {};
         const popupLittle = document.createElement('div');
         popupLittle.isRemoved = false;
         popupLittle.className = 'popup-little';
-        popupLittle.innerHTML = text;
+        // 新建一个div，用于存放内容
+        const popupLittleContent = document.createElement('div');
+        popupLittleContent.className = 'popup-little-content';
+        popupLittleContent.innerHTML = text;
+        popupLittle.appendChild(popupLittleContent);
+        popupLittle.pin = false;
         // const height = popupLittle.offsetHeight;
-        // popupLittle.style.cssText = `
-        //
-        //         `;
+        popupLittle.style.cssText = `
+            transition: 
+                opacity 0.5s linear,
+                width 0.5s linear, 
+                height 0.5s 0.5s linear, 
+                margin-bottom 0.5s 0.5s linear, 
+                margin-top 1s cubic-bezier(0, 0.5, 0.5, 1),
+                margin-left 1s cubic-bezier(0, 0.5, 0.5, 1),  
+                box-shadow 0.5s linear;
+        `;
         return popupLittle;
     }
 
@@ -251,6 +278,7 @@ var rNotificationDict = {};
         const popupContainer = document.querySelector('.popup-little-container');
         popupElement.style.opacity = 0;
         popupElement.style.marginBottom = `-${height + 10}px`;
+        popupElement.style.marginLeft = `${parseInt(popupElement.parentElement.style.width) + 40}px`;
         setTimeout(() => {
             if (!popupElement.isRemoved && popupContainer.contains(popupElement)) {
                 popupContainer.removeChild(popupElement);
@@ -313,7 +341,14 @@ var rNotificationDict = {};
                 void secondElement.offsetWidth;
 
                 // Re-enable the transition and reset margin-top to start the transition
-                secondElement.style.transition = 'opacity 0.5s linear, height 0.5s 0.5s linear, margin-bottom 0.5s 0.5s linear, margin-top 1s cubic-bezier(0, 0.5, 0.5, 1), box-shadow 0.5s linear';
+                secondElement.style.transition = `
+                    opacity 0.5s linear, 
+                    height 0.5s 0.5s linear, 
+                    margin-bottom 0.5s 0.5s linear, 
+                    margin-top 1s cubic-bezier(0, 0.5, 0.5, 1), 
+                    margin-left 1s cubic-bezier(0, 0.5, 0.5, 1),
+                    box-shadow 0.5s linear
+                `;
 
                 setTimeout(() => {
                     // secondElement.style.marginTop = '0px';
@@ -348,47 +383,139 @@ var rNotificationDict = {};
         // 添加点击事件，判断点击的时候是否有是按下了alt键，如果是，等松开alt键后复制选中的文本
         popupLittle.addEventListener('mousedown', (e) => {
             if (e.altKey) {
-                // console.log(e.target.innerText);
+                document.onmouseup = function () {
+                    // 获取选中的文本
+                    const selection = window.getSelection();
+                    const text = selection.toString();
+                    if (text) {
+                        // 复制选中的文本
+                        try {
+                            navigator.clipboard.writeText(text).then(r => {
+                                rStatusMessage.success("您已成功复制：" + text, "复制代码成功～");
+                            });
+                        } catch (err) {
+                            rStatusMessage.error(err, "复制代码错误", 0, 'up', 0);
+                        }
+                    }
+                    // 使得弹窗闪烁一下
+                    popupLittle.style.boxShadow = '0 0 10px #91cd85';
+                    setTimeout(() => {
+                        popupLittle.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
+                    }, 500);
+                }
             } else {
-                const rect = popupLittle.getBoundingClientRect();
-                const height = rect.height;
-                handleRemoval(popupLittle, height);
-            }
-        });
+                popupLittle.style.transition = 'none';
+                // 设置不允许选中任何文本
+                document.onselectstart = function () {
+                    return false;
+                }
+                // 设置允许拖动弹窗，只允许水平移动，修改他的marginLeft，让弹窗实时跟随鼠标移动
+                // 获取当前弹窗的marginLeft
+                const marginLeft = parseInt(window.getComputedStyle(popupLittle).marginLeft);
+                const zIndex = parseInt(window.getComputedStyle(popupLittle).zIndex);
+                popupLittle.style.zIndex = '9999';
+                // 获取鼠标当前位置
+                const startX = e.clientX;
+                // 弹窗跟随鼠标移动
+                document.onmousemove = function (e) {
+                    const endX = e.clientX;
+                    popupLittle.style.marginLeft = `${marginLeft + endX - startX}px`;
+                };
+                // 鼠标松开时，取消拖动
+                document.onmouseup = function () {
+                    document.onmousemove = null;
+                    document.onmouseup = null;
+                    // 设置允许选中任何文本
+                    document.onselectstart = function () {
+                        return true;
+                    }
+                    popupLittle.style.transition = `
+                        opacity 0.5s linear, 
+                        height 0.5s 0.5s linear, 
+                        margin-bottom 0.5s 0.5s linear, 
+                        margin-top 1s cubic-bezier(0, 0.5, 0.5, 1), 
+                        margin-left 1s cubic-bezier(0, 0.5, 0.5, 1),
+                        box-shadow 0.5s linear
+                    `;
+                    const rect = popupLittle.getBoundingClientRect();
+                    const width = rect.width;
+                    if (parseInt(window.getComputedStyle(popupLittle).marginLeft)-marginLeft > width / 3) {
+                        handleRemoval(popupLittle, rect.height);
+                    } else if(marginLeft - parseInt(window.getComputedStyle(popupLittle).marginLeft) > 10) {
+                        changePinStatus(popupLittle);
+                        // 弹窗回到原来的位置
+                        popupLittle.style.marginLeft = `${marginLeft}px`;
+                        popupLittle.style.zIndex = `${zIndex}`;
+                    }else {
+                        popupLittle.style.marginLeft = `${marginLeft}px`;
+                        popupLittle.style.zIndex = `${zIndex}`;
+                    }
 
-        popupLittle.addEventListener('mouseup', (e) => {
-            // 获取选中的文本
-            const selection = window.getSelection();
-            const text = selection.toString();
-            if (text) {
-                // 复制选中的文本
-                try {
-                    navigator.clipboard.writeText(text).then(r => {
-                        rStatusMessage.success("您已成功复制：" + text, "复制代码成功～");
-                    });
-                } catch (err) {
-                    rStatusMessage.error(err, "复制代码错误", 0, 'up', 0);
                 }
             }
-            // 使得弹窗闪烁一下
-            popupLittle.style.boxShadow = '0 0 10px #91cd85';
-            setTimeout(() => {
-                popupLittle.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
-            }, 500);
         });
 
         if (autoDisappearTime > 0) {
-            setTimeout(() => {
+            popupLittle.timeOut = setTimeout(() => {
                 const rect = popupLittle.getBoundingClientRect();
                 const height = rect.height;
                 handleRemoval(popupLittle, height);
             }, autoDisappearTime);
+        } else {
+            changePinStatus(popupLittle);
         }
 
         // 保存到字典中，取出rRandomStrQueue中的第一个随机字符串
         var randomString = rRandomStrQueue.shift();
         rNotificationDict[randomString] = popupLittle;
         return randomString;
+    }
+
+    /**
+     * 改变弹窗Pin状态
+     * @Author:	Anjie
+     * @Date:	2023-10-19
+     * @param popupLittle
+     */
+    function changePinStatus(popupLittle) {
+        if(popupLittle.pin){
+            popupLittle.pin = false;
+            // 删除svg
+            popupLittle.removeChild(popupLittle.lastChild);
+        }else{
+            popupLittle.pin = true;
+            // 插入svg到右上角，并且随着弹窗移动
+            // <svg t="1697685288185" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3116" width="200" height="200"><path d="M978.88 330.24l-294.08-294.4A62.08 62.08 0 0 0 597.44 32a62.08 62.08 0 0 0 3.2 87.04l22.72 22.72-154.56 155.2a320 320 0 0 0-266.56 64 29.44 29.44 0 0 0-2.24 43.52L608 814.72a29.44 29.44 0 0 0 43.52-2.24 320 320 0 0 0 64-266.56l154.56-154.56 22.72 22.72a62.08 62.08 0 0 0 87.36 3.2 62.08 62.08 0 0 0-1.28-87.04zM69.44 896a23.36 23.36 0 0 0 0 32l14.72 14.72a23.36 23.36 0 0 0 32 0l264.64-222.08-89.28-87.68z" fill="#1296db" p-id="3117"></path></svg>
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("t", "1697685288185");
+            svg.setAttribute("class", "icon");
+            svg.setAttribute("viewBox", "0 0 1024 1024");
+            svg.setAttribute("version", "1.1");
+            svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+            svg.setAttribute("p-id", "3116");
+            svg.setAttribute("width", "20");
+            svg.setAttribute("height", "20");
+            svg.style.cssText = `
+                position: absolute;
+                top: 0;
+                right: 0;
+                margin-top: 5px;
+                margin-right: 5px;
+                width: 10px;
+                height: 10px;
+                z-index: 9999;
+            `;
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", "M978.88 330.24l-294.08-294.4A62.08 62.08 0 0 0 597.44 32a62.08 62.08 0 0 0 3.2 87.04l22.72 22.72-154.56 155.2a320 320 0 0 0-266.56 64 29.44 29.44 0 0 0-2.24 43.52L608 814.72a29.44 29.44 0 0 0 43.52-2.24 320 320 0 0 0 64-266.56l154.56-154.56 22.72 22.72a62.08 62.08 0 0 0 87.36 3.2 62.08 62.08 0 0 0-1.28-87.04zM69.44 896a23.36 23.36 0 0 0 0 32l14.72 14.72a23.36 23.36 0 0 0 32 0l264.64-222.08-89.28-87.68z");
+            path.setAttribute("fill", "#1296db");
+            path.setAttribute("p-id", "3117");
+            svg.appendChild(path);
+            popupLittle.appendChild(svg);
+            // 取消弹窗的settimeout
+            if(popupLittle.timeOut){
+                clearTimeout(popupLittle.timeOut);
+            }
+        }
     }
 
     /**
@@ -564,7 +691,7 @@ var rNotificationDict = {};
             }
         }
         // 替换弹窗内容
-        popupLittle.innerHTML = message;
+        popupLittle.getElementsByClassName('popup-little-content')[0].innerHTML = message;
         // 使得弹窗闪烁一下
         popupLittle.style.boxShadow = '0 0 10px #91cd85';
         setTimeout(() => {
