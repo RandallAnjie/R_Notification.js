@@ -23,7 +23,7 @@ if (typeof rNotificationMaxCount == 'undefined') {
 if (typeof rNotificationVersion == 'undefined') {
     var rNotificationVersion = "";
 }
-rNotificationVersion = "V2.2 Beta";
+rNotificationVersion = "V2.6 Beta";
 
 /**
  * 更换最大保存弹窗数目
@@ -61,40 +61,7 @@ var rRandomStrQueue = [];
 // 存储随机字符串和对应的弹窗
 var rNotificationDict = {};
 
-var mouthPosition = {}
-
-// 如果拖动了链接标签，取消跳转，对于a标签只监听点击事项，不监听拖动事项，如果点击了a标签之后拖动，取消跳转
-document.addEventListener('dragstart', function (e) {
-    if (e.target.tagName === 'A') {
-        e.preventDefault();
-    }
-});
-
-document.addEventListener('click', function (e) {
-    if (e.target.tagName === 'A') {
-        e.preventDefault();
-    }
-});
-
-document.addEventListener('mousedown', function (e) {
-    mouthPosition = {
-        x: e.clientX,
-        y: e.clientY
-    };
-});
-
-document.addEventListener('mouseup', function (e) {
-    const endPosition = {
-        x: e.clientX,
-        y: e.clientY
-    }
-    if (mouthPosition.x === endPosition.x || mouthPosition.y === endPosition.y) {
-        if (e.target.tagName === 'A') {
-            // 跳转到新页面
-            window.open(e.target.href);
-        }
-    }
-});
+var mouthPosition = {};
 
 // 封装方法
 (function () {
@@ -200,6 +167,40 @@ document.addEventListener('mouseup', function (e) {
         for (var i = 0; i < showMessageQueue.length; i++) {
             showMessageInJS.apply(null, showMessageQueue[i]);
         }
+
+        // 如果拖动了链接标签，取消跳转，对于a标签只监听点击事项，不监听拖动事项，如果点击了a标签之后拖动，取消跳转
+        document.querySelector('.popup-little-container').addEventListener('dragstart', function (e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+            }
+        });
+
+        document.querySelector('.popup-little-container').addEventListener('click', function (e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+            }
+        });
+
+        document.querySelector('.popup-little-container').addEventListener('mousedown', function (e) {
+            mouthPosition = {
+                x: e.clientX,
+                y: e.clientY
+            };
+        });
+
+        document.querySelector('.popup-little-container').addEventListener('mouseup', function (e) {
+            const endPosition = {
+                x: e.clientX,
+                y: e.clientY
+            }
+            if (mouthPosition.x === endPosition.x || mouthPosition.y === endPosition.y) {
+                if (e.target.tagName === 'A') {
+                    // 跳转到新页面
+                    window.open(e.target.href);
+                }
+            }
+        });
+
         console.info(`您已经成功加载弹窗插件\n当前版本：${rNotificationVersion}\n详细使用方法及细节: https://notification.randallanjie.com/ \n仓库地址: https://github.com/RandallAnjie/RNotification \nCopyright randallanjie.com © . All rights reserved.\nAuthor: Randall\nWebsite: https://randallanjie.com`);
     });
 
@@ -457,7 +458,6 @@ document.addEventListener('mouseup', function (e) {
 
         // 添加触摸事件
         popupLittle.addEventListener('touchstart', (e) => {
-            console.log('touchstart');
             popupLittle.style.transition = 'none';
             // 设置不允许选中任何文本
             document.onselectstart = function () {
@@ -467,7 +467,6 @@ document.addEventListener('mouseup', function (e) {
             // 获取当前弹窗的marginLeft
             const marginLeft = parseInt(window.getComputedStyle(popupLittle).marginLeft);
             const zIndex = parseInt(window.getComputedStyle(popupLittle).zIndex);
-            console.log(marginLeft);
             popupLittle.style.zIndex = '9999';
             // 获取鼠标当前位置
             const startX = e.touches[0].clientX;
@@ -494,7 +493,6 @@ document.addEventListener('mouseup', function (e) {
                 `;
                 const rect = popupLittle.getBoundingClientRect();
                 const width = rect.width;
-                console.log(parseInt(window.getComputedStyle(popupLittle).marginLeft));
                 if (parseInt(window.getComputedStyle(popupLittle).marginLeft)-marginLeft > width / 3) {
                     handleRemoval(popupLittle, rect.height);
                 } else if(marginLeft - parseInt(window.getComputedStyle(popupLittle).marginLeft) > 10) {
