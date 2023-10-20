@@ -23,7 +23,7 @@ if (typeof rNotificationMaxCount == 'undefined') {
 if (typeof rNotificationVersion == 'undefined') {
     var rNotificationVersion = "";
 }
-rNotificationVersion = "V2.6";
+rNotificationVersion = "V2.7";
 
 /**
  * 更换最大保存弹窗数目
@@ -61,40 +61,7 @@ var rRandomStrQueue = [];
 // 存储随机字符串和对应的弹窗
 var rNotificationDict = {};
 
-var mouthPosition = {}
-
-// 如果拖动了链接标签，取消跳转，对于a标签只监听点击事项，不监听拖动事项，如果点击了a标签之后拖动，取消跳转
-document.addEventListener('dragstart', function (e) {
-    if (e.target.tagName === 'A') {
-        e.preventDefault();
-    }
-});
-
-document.addEventListener('click', function (e) {
-    if (e.target.tagName === 'A') {
-        e.preventDefault();
-    }
-});
-
-document.addEventListener('mousedown', function (e) {
-    mouthPosition = {
-        x: e.clientX,
-        y: e.clientY
-    };
-});
-
-document.addEventListener('mouseup', function (e) {
-    const endPosition = {
-        x: e.clientX,
-        y: e.clientY
-    }
-    if (mouthPosition.x === endPosition.x || mouthPosition.y === endPosition.y) {
-        if (e.target.tagName === 'A') {
-            // 跳转到新页面
-            window.open(e.target.href);
-        }
-    }
-});
+var mouthPosition = {};
 
 // 封装方法
 (function () {
@@ -108,13 +75,17 @@ document.addEventListener('mouseup', function (e) {
         div.style.position = "fixed";
         div.style.top = "0";
         div.style.right = "0";
+        div.style.bottom = "0";
+        div.style.left = "0";
         div.style.paddingTop = `${rPaddingTop}px`;
         div.style.paddingRight = `${rPaddingRight}px`;
+        div.style.paddingLeft = `calc(100vw - ${rPaddingRight+380}px)`;
         div.style.zIndex = "9888";
         // 设置最大宽度为100%减去2倍的padding
-        div.style.maxWidth = `calc(100vw - ${rPaddingRight * 2}px)`;
-        div.style.width = "380px";
-        div.style.height = "100%";
+        // div.style.maxWidth = `calc(100vw - ${rPaddingRight * 2}px)`;
+        // div.style.width = "380px";
+        div.style.width = `calc(100vw - ${rPaddingRight}px)`;
+        div.style.height = `calc(100vh - ${rPaddingTop}px)`;
         div.style.overflow = "auto";
         div.style.scrollBehavior = "smooth";
         // 设置 maxHeight 为 100% 屏幕高减去 top
@@ -133,7 +104,7 @@ document.addEventListener('mouseup', function (e) {
                 -ms-overflow-style: none; /* IE 和 Edge */
             }
         `;
-        // 设置div点击穿透，但是子元素不穿透
+        // 设置div点击穿透，但是子元素不穿透，设置弹窗位置靠右，弹窗内容靠左
         style.innerHTML += `
             .popup-little-container {
                 pointer-events: none;
@@ -170,7 +141,7 @@ document.addEventListener('mouseup', function (e) {
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
                 border-radius: 8px;
                 padding: 10px;
-                width: calc(100% - 40px);
+                width: ${380-40}px;
                 margin-left: 10px;
                 margin-bottom: 0px;
                 margin-top: 10px;
@@ -200,6 +171,40 @@ document.addEventListener('mouseup', function (e) {
         for (var i = 0; i < showMessageQueue.length; i++) {
             showMessageInJS.apply(null, showMessageQueue[i]);
         }
+
+        // 如果拖动了链接标签，取消跳转，对于a标签只监听点击事项，不监听拖动事项，如果点击了a标签之后拖动，取消跳转
+        document.querySelector('.popup-little-container').addEventListener('dragstart', function (e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+            }
+        });
+
+        document.querySelector('.popup-little-container').addEventListener('click', function (e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+            }
+        });
+
+        document.querySelector('.popup-little-container').addEventListener('mousedown', function (e) {
+            mouthPosition = {
+                x: e.clientX,
+                y: e.clientY
+            };
+        });
+
+        document.querySelector('.popup-little-container').addEventListener('mouseup', function (e) {
+            const endPosition = {
+                x: e.clientX,
+                y: e.clientY
+            }
+            if (mouthPosition.x === endPosition.x || mouthPosition.y === endPosition.y) {
+                if (e.target.tagName === 'A') {
+                    // 跳转到新页面
+                    window.open(e.target.href);
+                }
+            }
+        });
+
         console.info(`您已经成功加载弹窗插件\n当前版本：${rNotificationVersion}\n详细使用方法及细节: https://notification.randallanjie.com/ \n仓库地址: https://github.com/RandallAnjie/RNotification \nCopyright randallanjie.com © . All rights reserved.\nAuthor: Randall\nWebsite: https://randallanjie.com`);
     });
 
@@ -278,7 +283,8 @@ document.addEventListener('mouseup', function (e) {
         const popupContainer = document.querySelector('.popup-little-container');
         popupElement.style.opacity = 0;
         popupElement.style.marginBottom = `-${height + 10}px`;
-        popupElement.style.marginLeft = `${parseInt(popupElement.parentElement.style.width) + 40}px`;
+        const screenWidth = document.body.clientWidth;
+        popupElement.style.marginLeft = `${screenWidth - 40}px`;
         setTimeout(() => {
             if (!popupElement.isRemoved && popupContainer.contains(popupElement)) {
                 popupContainer.removeChild(popupElement);
@@ -530,9 +536,9 @@ document.addEventListener('mouseup', function (e) {
      */
     function changePinStatus(popupLittle) {
         if(popupLittle.pin){
-            popupLittle.pin = false;
-            // 删除svg
-            popupLittle.removeChild(popupLittle.lastChild);
+            // popupLittle.pin = false;
+            // // 删除svg
+            // popupLittle.removeChild(popupLittle.lastChild);
         }else{
             popupLittle.pin = true;
             // 插入svg到右上角，并且随着弹窗移动
