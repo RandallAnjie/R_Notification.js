@@ -273,39 +273,39 @@
             let autoDisappearTime = 0;
             for (let i = 0; i < chackbox.length; i++) {
                 if (chackbox[i].checked) {
-                    if (i == 0) {
+                    if (i === 0) {
                         msg = getNowTime() + ' ' + msg;
                     }
-                    if (i == 1) {
+                    if (i === 1) {
                         save = 1;
                     }
-                    if (i == 2) {
+                    if (i === 2) {
                         position = 'down';
                     }
-                    if (i == 3) {
+                    if (i === 3) {
                         autoDisappearTime = 5000;
                     }
                 }
             }
             rShowMessage(msg, save, position, autoDisappearTime);
         }
-        async function copyToClipboard(text) {
+        async function copyToClipboard() {
             try {
-                await navigator.clipboard.writeText(text);
-                rStatusMessage.success("您已成功复制：" + text, "复制代码成功～");
+                await navigator.clipboard.writeText("\<script src=\"https://notification.randallanjie.com/r_notification.js\"\>\</script\>");
+                const msgId = rStatusMessage.success("复制代码成功～");
             } catch (err) {
                 rStatusMessage.error(err, "复制代码错误", 0, 'up', 0);
             }
         }
         function howToUse() {
-            if (show == 0) {
+            if (show === 0) {
                 show = 1;
                 document.getElementById('eg').style.display = 'block';
                 rShowMessage(`感谢使用 R_Notification.js <br />
                 使用方法见左侧<br />
                 rShowMessage(msg, save, position, autoDisappearTime);`, 0, 'up', 0);
             }
-            copyToClipboard(`\<script src="https://notification.randallanjie.com/r_notification.js"\>\</script\>`);
+            copyToClipboard();
         }
         function sendStatusMsg(status){
             rStatusMessage[status]('我是'+status+'通知内容～', status+'弹窗标题');
