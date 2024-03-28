@@ -23,7 +23,7 @@ if (typeof rNotificationMaxCount == 'undefined') {
 if (typeof rNotificationVersion == 'undefined') {
     var rNotificationVersion = "";
 }
-rNotificationVersion = "V2.6 Beta";
+rNotificationVersion = "V2.8 Beta";
 
 /**
  * 更换最大保存弹窗数目
@@ -151,8 +151,6 @@ var mouthPosition = {};
             }
             
             .popup-little-content {
-                display: flex;
-                flex-direction: column;
                 width: 100%;
                 height: 100%;
             }
@@ -205,7 +203,7 @@ var mouthPosition = {};
             }
         });
 
-        console.info(`您已经成功加载弹窗插件\n当前版本：${rNotificationVersion}\n详细使用方法及细节: https://notification.randallanjie.com/ \n仓库地址: https://github.com/RandallAnjie/RNotification \nCopyright randallanjie.com © . All rights reserved.\nAuthor: Randall\nWebsite: https://randallanjie.com`);
+        console.info(`您已经成功加载 R_Notification.js 弹窗插件\n当前版本：${rNotificationVersion}\n详细使用方法及细节: https://notification.randallanjie.com/ \n仓库地址: https://github.com/RandallAnjie/R_Notification.js \nCopyright randallanjie.com © . All rights reserved.\nAuthor: Randall\nWebsite: https://randallanjie.com`);
     });
 
     /**
@@ -258,6 +256,7 @@ var mouthPosition = {};
         popupLittleContent.innerHTML = text;
         popupLittle.appendChild(popupLittleContent);
         popupLittle.pin = false;
+        popupLittle.canclose = true;
         // const height = popupLittle.offsetHeight;
         popupLittle.style.cssText = `
             transition: 
@@ -270,6 +269,47 @@ var mouthPosition = {};
                 box-shadow 0.5s linear;
         `;
         return popupLittle;
+    }
+
+    /**
+     * 安全移动弹窗判断
+     * @Author:	Anjie
+     * @Date:	2024-03-28
+     * @param popupElement
+     * @param height
+     */
+    function safeMove(popupLittle, marginLeft, zIndex) {
+        const rect = popupLittle.getBoundingClientRect();
+        const width = rect.width;
+        if (parseInt(window.getComputedStyle(popupLittle).marginLeft)-marginLeft > width / 3) {
+            if(popupLittle.canclose){
+                handleRemoval(popupLittle, rect.height);
+            }else{
+                // changePinStatus(popupLittle);
+                // 弹窗回到原来的位置
+                popupLittle.style.marginLeft = `${marginLeft}px`;
+                popupLittle.style.zIndex = `${zIndex}`;
+                // 判断localstorage中是否有将rNotificationTeach中第一位值是否为1，如果是，说明已经展示过教程，不再展示，如果不是1或者没有，展示教程
+                let rNotificationTeach = localStorage.getItem('rNotificationTeach');
+                // 获取rNotificationTeach中的第一位值
+                let firstValue = rNotificationTeach ? rNotificationTeach.charAt(0) : null;
+                if(firstValue != '1') {
+                    // 展示教程
+                    rInfoMessage("您正在尝试删除一个已经固定弹窗，请尝试左滑取消固定弹窗后再右滑删除", "教程：取消固定弹窗", 0, 'up', 5000)
+                    // 将rNotificationTeach设置为1
+                    rNotificationTeach = '1' + (rNotificationTeach ? rNotificationTeach.substring(1) : '');
+                    localStorage.setItem('rNotificationTeach', rNotificationTeach);
+                }
+            }
+        } else if(marginLeft - parseInt(window.getComputedStyle(popupLittle).marginLeft) > 10) {
+            changePinStatus(popupLittle);
+            // 弹窗回到原来的位置
+            popupLittle.style.marginLeft = `${marginLeft}px`;
+            popupLittle.style.zIndex = `${zIndex}`;
+        }else {
+            popupLittle.style.marginLeft = `${marginLeft}px`;
+            popupLittle.style.zIndex = `${zIndex}`;
+        }
     }
 
     /**
@@ -443,20 +483,7 @@ var mouthPosition = {};
                         margin-left 1s cubic-bezier(0, 0.5, 0.5, 1),
                         box-shadow 0.5s linear
                     `;
-                    const rect = popupLittle.getBoundingClientRect();
-                    const width = rect.width;
-                    if (parseInt(window.getComputedStyle(popupLittle).marginLeft)-marginLeft > width / 3) {
-                        handleRemoval(popupLittle, rect.height);
-                    } else if(marginLeft - parseInt(window.getComputedStyle(popupLittle).marginLeft) > 10) {
-                        changePinStatus(popupLittle);
-                        // 弹窗回到原来的位置
-                        popupLittle.style.marginLeft = `${marginLeft}px`;
-                        popupLittle.style.zIndex = `${zIndex}`;
-                    }else {
-                        popupLittle.style.marginLeft = `${marginLeft}px`;
-                        popupLittle.style.zIndex = `${zIndex}`;
-                    }
-
+                    safeMove(popupLittle, marginLeft, zIndex);
                 }
             }
         });
@@ -496,19 +523,7 @@ var mouthPosition = {};
                     margin-left 1s cubic-bezier(0, 0.5, 0.5, 1),
                     box-shadow 0.5s linear
                 `;
-                const rect = popupLittle.getBoundingClientRect();
-                const width = rect.width;
-                if (parseInt(window.getComputedStyle(popupLittle).marginLeft)-marginLeft > width / 3) {
-                    handleRemoval(popupLittle, rect.height);
-                } else if(marginLeft - parseInt(window.getComputedStyle(popupLittle).marginLeft) > 10) {
-                    changePinStatus(popupLittle);
-                    // 弹窗回到原来的位置
-                    popupLittle.style.marginLeft = `${marginLeft}px`;
-                    popupLittle.style.zIndex = `${zIndex}`;
-                }else {
-                    popupLittle.style.marginLeft = `${marginLeft}px`;
-                    popupLittle.style.zIndex = `${zIndex}`;
-                }
+                safeMove(popupLittle, marginLeft, zIndex);
             }
         });
 
@@ -537,10 +552,12 @@ var mouthPosition = {};
     function changePinStatus(popupLittle) {
         if(popupLittle.pin){
             popupLittle.pin = false;
+            popupLittle.canclose = true;
             // 删除svg
             popupLittle.removeChild(popupLittle.lastChild);
         }else{
             popupLittle.pin = true;
+            popupLittle.canclose = false;
             // 插入svg到右上角，并且随着弹窗移动
             // <svg t="1697685288185" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3116" width="200" height="200"><path d="M978.88 330.24l-294.08-294.4A62.08 62.08 0 0 0 597.44 32a62.08 62.08 0 0 0 3.2 87.04l22.72 22.72-154.56 155.2a320 320 0 0 0-266.56 64 29.44 29.44 0 0 0-2.24 43.52L608 814.72a29.44 29.44 0 0 0 43.52-2.24 320 320 0 0 0 64-266.56l154.56-154.56 22.72 22.72a62.08 62.08 0 0 0 87.36 3.2 62.08 62.08 0 0 0-1.28-87.04zM69.44 896a23.36 23.36 0 0 0 0 32l14.72 14.72a23.36 23.36 0 0 0 32 0l264.64-222.08-89.28-87.68z" fill="#1296db" p-id="3117"></path></svg>
             const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
