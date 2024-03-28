@@ -23,7 +23,7 @@ if (typeof rNotificationMaxCount == 'undefined') {
 if (typeof rNotificationVersion == 'undefined') {
     var rNotificationVersion = "";
 }
-rNotificationVersion = "V2.8 Beta";
+rNotificationVersion = "V2.8 Beta2";
 
 /**
  * 更换最大保存弹窗数目
@@ -84,8 +84,8 @@ var mouthPosition = {};
         // 设置最大宽度为100%减去2倍的padding
         // div.style.maxWidth = `calc(100vw - ${rPaddingRight * 2}px)`;
         // div.style.width = "380px";
-        div.style.width = `calc(100vw - ${rPaddingRight}px)`;
-        div.style.height = `calc(100vh - ${rPaddingTop}px)`;
+        div.style.width = "100vw";
+        div.style.height = "100vh";
         div.style.overflow = "auto";
         div.style.scrollBehavior = "smooth";
         // 设置 maxHeight 为 100% 屏幕高减去 top
