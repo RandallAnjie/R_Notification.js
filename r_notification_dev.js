@@ -369,10 +369,13 @@ var mouthPosition = {};
         const popupLittle = createPopupElement(message, save);
 
         if (position === 'up') {
-            popupContainer.prepend(popupLittle);
+            if (popupContainer){
+                popupContainer.prepend(popupLittle);
+            }
             // animateFlyIn(popupLittle, 'flyInFromTop');
-
-            popupContainer.prepend(popupLittle);
+            if (popupContainer){
+                popupContainer.prepend(popupLittle);
+            }
             const rect = popupLittle.getBoundingClientRect();
             const height = rect.height;
             popupLittle.style.animation = 'flyInFromTop 1s forwards';
