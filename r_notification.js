@@ -152,7 +152,7 @@ var mouthPosition = {};
             
             .popup-little-content {
                 width: 100%;
-                height: 100%;
+                height: fit-content;
             }
         `;
         document.head.appendChild(style);
